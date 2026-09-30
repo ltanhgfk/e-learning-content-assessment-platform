@@ -1,0 +1,93 @@
+﻿@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    GetData data = new GetData();
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = "Trang chủ - " + web_name.Name;
+    }
+    else
+    {
+        ViewBag.Title = "Trang chủ";
+    }
+
+    var specialpost = db.PostRepository.GetAll().Where(m=>m.PostType == "special" && m.Status == true).OrderByDescending(m => m.LastModifiedOnDate).Take(9).ToList();
+    //6 bai viet moi nhat > main slider
+    
+    //var articles = data.GetPostByType("article").Take(4).ToList();
+    //var courses = data.GetPostByType("article").Take(5).ToList();
+    //var programings = data.GetPostByType("article").Take(5).ToList();
+    //var graphics = data.GetPostByType("article").Take(5).ToList();
+    //var basics = data.GetPostByType("article").Take(5).ToList();
+    //var othercategories = data.GetRootCategoriesByType("other");
+    //var other = data.GetPostByType("other").ToList();
+
+    var tags = data.GetTagList();
+}
+
+@if (specialpost != null)
+{
+    <div class="slick_slider">
+        @foreach (var item in specialpost)
+        {
+            <div class="single_iteam">
+                <a href='@Url.Action("PostDetail", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' title="@item.Name"> <img src="~/Upload/images/@item.Avatar" alt="@item.Name"></a>
+                <div class="slider_article">
+                    <h2><a class="slider_tittle" href='@Url.Action("PostDetail", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' title="@item.Name">@item.Name</a></h2>
+                    @*<p style="color:#fff; font-size: 10pt;"><i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate) </p>*@
+                    <p style="padding-left: 10px; padding-right: 10px"><i class="fa fa-user"></i> &nbsp;@data.GetFullnameByUserId((int)item.UserId)</p>
+                    <p style="padding-left: 10px; padding-right: 10px"><a style="color:#fff" href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim()) })'> <i class="fa fa-tags"></i> &nbsp;@db.CategoryRepository.FindByID(item.CateId).Name</a></p>              
+                    <br />
+                    <p style="text-align: justify; padding-left: 10px; padding-right: 10px">
+                        @item.Resume
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@foreach (var item in data.GetRootCategories().OrderBy(m => m.Position)) //Convert.ToInt32(Request.QueryString["id"])
+{
+    //Lay danh sach toan bo danh mục con
+    var sub_cate_id_list_by_cate = db.CategoryRepository.GetAll().Where(m => m.ParentId == item.Id && m.Status == true).Select(m => m.Id).ToList(); /*.OrderBy(m => m.Position)*/
+    var postbycate = db.PostRepository.GetAll().Where(m => sub_cate_id_list_by_cate.Contains(m.CateId) == true).Where(m=> m.PostType == "article" && m.Status == true).OrderByDescending(m => m.LastModifiedOnDate).Take(6).ToList(); /*.OrderBy(m => m.Position)*/
+    if (postbycate.Count >= 1)
+    {
+        <div class="callout top-left"> <a href='@Url.Action("PostByCate", "Home", new { cateid = item.Id, catename = data.GenerateFriendlyName(item.Name.Trim()) })' title="@item.Name"><i class="fa fa-tags"></i> @item.Name</a></div>
+        <div class="single_post_content_other_cate">
+
+            <div class="single_post_content_left">
+                        <figure class="bsbig_fig">
+                            <a href='@Url.Action("PostDetail", "Home", new { postid = postbycate[0].Id, postname = data.GenerateFriendlyName(postbycate[0].Name.Trim()) })' class="featured_img" title="@postbycate[0].Name"> <img alt="@postbycate[0].Name" src="~/Upload/images/@postbycate[0].Avatar"> <span class="overlay"></span> </a>
+                            <figcaption> <a href='@Url.Action("PostDetail", "Home", new { postid = postbycate[0].Id, postname = data.GenerateFriendlyName(postbycate[0].Name.Trim()) })' title="@postbycate[0].Name">@postbycate[0].Name</a> </figcaption>
+                            <p class="big_sub_post_info">@*<i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", postbycate[0].LastModifiedOnDate)*@   <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)postbycate[0].UserId) &nbsp; <a href='@Url.Action("PostBySubCate", "Home", new { subcateid = postbycate[0].CateId, subcatename = data.GenerateFriendlyName(postbycate[0].Name.Trim()) })'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(postbycate[0].CateId).Name</a></p>
+                            <p>@postbycate[0].Resume</p>
+                        </figure>
+                <hr />
+            </div>
+            <div class="single_post_content_right">               
+                    @for (int i = 1; i < postbycate.Count; i++)
+                    {                    
+                        <div class="media wow fadeInDown" >
+                            <a href='@Url.Action("PostDetail", "Home", new { postid = postbycate[i].Id, postname = data.GenerateFriendlyName(postbycate[i].Name.Trim()) })' class="media-left" title="@postbycate[i].Name"> <img alt="@postbycate[i].Name" src="~/Upload/images/@postbycate[i].Avatar"> </a>
+                            <div class="media-body">
+                                <a href='@Url.Action("PostDetail", "Home", new { postid = postbycate[i].Id, postname = data.GenerateFriendlyName(postbycate[i].Name.Trim()) })' class="catg_title" title="@postbycate[i].Name">@postbycate[i].Name</a>
+                                <p class="small_sub_post_info">@*<i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", postbycate[i].LastModifiedOnDate)*@ <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)postbycate[i].UserId) &nbsp; <a href='@Url.Action("PostBySubCate", "Home", new { subcateid = postbycate[i].CateId, subcatename = data.GenerateFriendlyName(postbycate[i].Name.Trim()) })'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(postbycate[i].CateId).Name</a></p>
+                            </div>                     
+                            <hr />
+                        </div>                                                                 
+                    }               
+            </div>            
+        </div>
+    }
+}

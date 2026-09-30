@@ -1,0 +1,346 @@
+﻿@model LmpSystem.ViewModels.LessonDetailViewModel
+
+@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+@{
+    //ViewBag.Title = "Chi tiết bài viết";
+    Layout = "~/Views/Shared/_Layout_no_aside.cshtml";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    GetData data = new GetData();
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = Model.Name + " - " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = Model.Name;
+    }
+
+    //var social_network_list = data.GetListLmpInfoByCode("social_network_list");// [Display(Name = "Mạng xã hội")]
+    //var slide_left = data.GetLmpInfoByCode("slide_left");
+    //var slide_right = data.GetLmpInfoByCode("slide_right");
+    var share_social_network_inline = data.GetLmpInfoByCode("share_social_network_inline");
+    var share_social_network_javascript = data.GetLmpInfoByCode("share_social_network_javascript");
+    var facebook_commnent_code = data.GetLmpInfoByCode("facebook_commnent_code");
+    var facebook_likeshare_code = data.GetLmpInfoByCode("facebook_likeshare_code");
+
+    var tags = data.GetTagList();
+    var fanpage_facebook = data.GetLmpInfoByCode("fanpage_facebook");//[Display(Name = "Facebook Fanpage")]
+    var first_right_ad_banner = data.GetLmpInfoByCode("first_right_ad_banner");// [Display(Name = "Banner quảng cáo số 1 bên phải")]
+
+    var keyword = "";
+    //var other = data.GetPostByType("other").ToList();
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+    .active_subcate {
+        /*background-color: #FFCC00 !important;*/
+        color: #aaa !important;
+        font-size: 16px !important;
+        cursor: not-allowed !important;
+    }
+    /*.active_subcate a{
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
+    }*/
+</style>
+
+<script>
+    $(document).ready(function () {
+        $("#lesson_@Model.Id").removeClass("catg_title");
+        $("#lesson_@Model.Id").addClass("active_subcate");
+        $("#lesson_@Model.Id").click(false);
+    });
+</script>
+
+<div class="col-lg-8 col-md-8 col-sm-8">
+    <div class="single_page">
+
+        @*<ol class="breadcrumb">
+                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                <li>
+                    @if (ViewContext.RouteData.Values["controller"].ToString() != "Home")
+                    {
+                        @: @Html.ActionLink(ViewContext.RouteData.Values["controller"].ToString(), "Index", ViewContext.RouteData.Values["controller"].ToString())
+                    }
+                    @if (ViewContext.RouteData.Values["action"].ToString() != "Index")
+                    {
+                        @: @Html.ActionLink(ViewContext.RouteData.Values["action"].ToString(), ViewContext.RouteData.Values["action"].ToString(), ViewContext.RouteData.Values["controller"].ToString())
+                    }
+                </li>
+            </ol>*@
+
+        <h1>@Model.Name</h1>
+        @{
+            var url = "http://hoccungcophuong.edu.vn/bai-hoc-chi-tiet-" + data.GenerateFriendlyName(Model.Name.Trim()) + "-" + @Model.Id + "-html";
+        }
+        <div class="related_post" style="color:#666; margin-top: 10px; font-size: 13px;">
+            @Html.Raw(Model.Resume)
+        </div>
+
+        <div class="post_commentbox related_post">
+            <a href='@Url.Action("PostDetail", "Home", new { postid = Model.PostId, postname = data.GenerateFriendlyName(Model.PostName.Trim()) })' title="@Model.PostName"><i class="fa fa-tags"></i>@Model.PostName</a>
+        </div>
+
+        @*<div class="related_post">
+                @if (facebook_likeshare_code != null)
+                {
+                    var url = "http://hoccungcophuong.edu.vn/bai-hoc-chi-tiet-" + data.GenerateFriendlyName(Model.Name.Trim()) + "-" + @Model.Id + "-html";
+                    <div class="fb-like" data-href="@url" data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="true"></div>
+                }
+            </div>*@
+
+        <div class="related_post">
+            @*<div class="vide_area">
+                    <iframe width="100%" src="@Html.Raw(Model.Video)" frameborder="0" allowfullscreen></iframe>
+                </div>*@
+            @*@if (@Model.Video == null)
+                {
+                    <img src="~/Upload/images/@Model.Avatar" width="100%" alt="@Model.Name" />
+                }
+                else
+                {
+                    <div class="vide_area">
+                        <iframe width="100%" height="250" src="@Html.Raw(Model.Video)" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                }*@
+            @Html.Raw(Model.Video)
+        </div>
+
+        <div class="related_post">
+            @Html.Raw(Model.Content)
+        </div>
+
+        @if (Model.Questions.Count >= 1)
+        {
+            <div class="single_post_content">
+                <a class="catg_title" style="font-weight:bold;" href='@Url.Action("TestQuiz", "Home", new { lessonid = Model.Id, postid = Model.PostId })' title="@Model.Name"> &raquo; Làm bài kiểm tra trắc nghiệm</a>
+            </div>
+        }
+
+        <div class="related_post">
+            @Html.Raw(Model.Exercises)
+        </div>
+
+        @*@{
+            var Lessons = db.PostRepository.FindByID(Model.PostId).Lessons;
+            if (Lessons.Count >= 1)
+            {
+                <div class="single_post_content">
+                    <div class="callout top-left">Chương trình học</div>
+                    <div class="single_post_content_other_cate">
+                        @{
+                            int i = 1;
+                            foreach (var item in Lessons)
+                            {
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <a href='@Url.Action("LessonDetail", "Home", new { lessonid = item.Id })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                                        <div class="media-body">
+                                            <a href='@Url.Action("LessonDetail", "Home", new { lessonid = item.Id })' class="catg_title" title="@item.Name" style="font-weight: bold"> @item.Name</a>
+                                            <p style="color:#888; font-size: 9pt;">@Html.Raw(item.Resume)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                i++;
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            }*@
+
+        <div class="related_post" style="border: 1px solid #eee; padding: 10px 0px 0px 10px">
+            <div style="float:left; margin-right: 6px; font-weight: bold">Chia sẻ: </div>
+            <div style="float: left; margin-right: 6px">
+                <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="true">Tweet</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+            <div style="float: left; margin-right: 6px">
+                <div class="fb-like" data-href=@url data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="true"></div>
+            </div>
+            <div style="float: left; margin-right: 6px">
+                <g:plusone></g:plusone>
+            </div>
+        </div>
+
+        <div class="single_page_content123">
+            <ul>
+                @foreach (var item in Model.LessonTags)
+                {
+                    <li class="cat-item"><a href='@Url.Action("PostByTag", "Home", new { tagid = @item.TagID, tagname = data.GenerateFriendlyName(item.TagName.Trim()) })' title="@item.TagName">@item.TagName</a></li>
+                    keyword = keyword + @item.TagName + ", ";
+                }
+                @{
+                    //ViewBag.Keywords = "ok con de, tu khoa, lap trinh, trai tim";
+                    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+                    if (google_seo_keyword != null)
+                    {
+                        ViewBag.Keywords = google_seo_keyword.Link + ", " + keyword + Model.Name;
+                    }
+                    else
+                    {
+                        ViewBag.Keywords = keyword + Model.Name;
+                    }
+                }
+            </ul>
+        </div>
+
+        <div class="single_post_content">
+            <div class="row">
+                @{
+                    var previousLesson = db.LessonRepository.GetAll().Where(m => m.PostId == Model.PostId && m.Position < Model.Position && m.Status == true).OrderByDescending(m => m.Position).Take(1).FirstOrDefault();
+                    var nextLesson = db.LessonRepository.GetAll().Where(m => m.PostId == Model.PostId && m.Position > Model.Position && m.Status == true).OrderBy(m => m.Position).Take(1).FirstOrDefault();
+                }
+                <div class="col-lg-6 col-md-6 col-sm-6" style="margin-top:20px;">
+                    <div class="media wow fadeInDown">
+                        <p class="small_sub_post_info">
+                            &laquo; Bài trước
+                        </p>
+                        @if (previousLesson != null)
+                        {
+                            <div class="media-body">
+                                <a href='@Url.Action("LessonDetail", "Home", new { lessonid = previousLesson.Id, lessonname = data.GenerateFriendlyName(previousLesson.Name.Trim()) })' class="catg_title" title="@previousLesson.Name"> @previousLesson.Name</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-6" style="margin-top:20px;text-align: right">
+                    <div class="media wow fadeInDown">
+                        <p class="small_sub_post_info">
+                            Bài kế tiếp &raquo;
+                        </p>
+                        @if (nextLesson != null)
+                        {
+                            <div style="width: 100%">
+                                <a href='@Url.Action("LessonDetail", "Home", new { lessonid = nextLesson.Id, lessonname = data.GenerateFriendlyName(nextLesson.Name.Trim()) })' class="catg_title" title="@nextLesson.Name"> @nextLesson.Name</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="related_post">
+            @{
+                ////var url = "http://hoccungcophuong.edu.vn/bai-hoc-chi-tiet-" + data.GenerateFriendlyName(Model.Name.Trim()) + "-" + @Model.Id + "-html";
+                <div class="fb-comments" data-href="@url" data-width="100%" data-numposts="5"></div>
+            }
+        </div>
+
+        @*<div class="social_link">
+                @if (share_social_network_inline != null)
+                {
+                    @Html.Raw(@share_social_network_inline.Content)
+                }
+                else
+                {
+                    <div class="addthis_inline_share_toolbox"></div>
+                }
+            </div>*@
+
+        @*@if (facebook_commnent_code != null)
+            {
+                var url = "http://hoccungcophuong.edu.vn/bai-hoc-chi-tiet-" + data.GenerateFriendlyName(Model.Name.Trim()) + "-" + @Model.Id + "-html";
+                <div class="fb-comments" data-href="@url" data-width="100%" data-numposts="5"></div>
+            }*@
+
+        @{
+            var CateId = db.PostRepository.FindByID(Model.PostId).CateId;
+            var otherpost = db.PostRepository.GetAll().Where(m => m.CateId == CateId && m.Status == true && m.Id != Model.PostId && (m.PostType == "special" || m.PostType == "article")).OrderByDescending(m => m.LastModifiedOnDate).ToList();
+            if (otherpost.Count >= 1)
+            {
+                <div class="related_post">
+                    @*<h2>Bài viết khác cùng danh mục</h2>*@
+                    <div class="callout top-left">Các bài viết khác liên quan</div>
+                    <div class="single_post_content_other_cate">
+                        <div class="row">
+                            @foreach (var item in otherpost)
+                            {
+                                <div class="col-lg-6 col-md-6 col-sm-6" style="margin-top:20px;">
+                                    <div class="media wow fadeInDown">
+                                        <a href='@Url.Action("PostDetail", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                                        <div class="media-body">
+                                            <a href='@Url.Action("PostDetail", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name"> @item.Name</a>
+                                            <p class="small_sub_post_info"> @*<i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate)*@ <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)item.UserId) &nbsp;<a href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim())})'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(item.CateId).Name</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="col-lg-4 col-md-4 col-sm-4">
+    <div class="single_sidebar">
+        <h2><span>Mục lục bài học</span></h2>
+        <ul class="spost_nav">
+            @{
+                var lessons = db.PostRepository.FindByID(Model.PostId).Lessons.Where(m => m.Status == true).OrderBy(m => m.Position);
+                foreach (var item in lessons)
+                {
+                    <li>
+                        <div class="media wow fadeInDown">
+                            @*<a href='@Url.Action("LessonDetail", "Home", new { lessonid = @item.Id, lessonname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>*@
+                            <div class="media-body">
+                                <a id="lesson_@item.Id" href='@Url.Action("LessonDetail", "Home", new { lessonid = @item.Id, lessonname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">&raquo; @item.Name</a>
+                            </div>
+                        </div>
+                    </li>
+                    @*<li><hr /></li>*@
+                }
+            }
+        </ul>
+    </div>
+    <aside class="right_content">
+        @if (first_right_ad_banner != null)
+        {
+            <div class="single_sidebar">
+                <div class="single_sidebar wow fadeInDown">
+                    <a class="sideAdd" href="@first_right_ad_banner.Link" title="@first_right_ad_banner.Name">
+                        <img src="~/Upload/images/@first_right_ad_banner.Avatar" alt="@first_right_ad_banner.Name">
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (tags.Count >= 1)
+        {
+            <div class="single_sidebar wow fadeInDown">
+                <h2><span>Thẻ (tag)</span></h2>
+                <ul>
+                    @foreach (var item in tags)
+                    {
+                        <li class="cat-item"><a href='@Url.Action("PostbyTag", "Home", new { tagid = @item.TagID, tagname = data.GenerateFriendlyName(item.TagName.Trim()) })'>@item.TagName</a></li>
+                    }
+                </ul>
+            </div>
+        }
+
+        @if (fanpage_facebook != null)
+        {
+            <div class="single_sidebar">
+                <div class="single_sidebar wow fadeInDown">
+                    @Html.Raw(@fanpage_facebook.Content)
+                </div>
+            </div>
+        }
+    </aside>
+</div>
+
+

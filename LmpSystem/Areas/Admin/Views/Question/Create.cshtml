@@ -1,0 +1,149 @@
+﻿@model LmpSystem.ViewModels.QuestionViewModel
+
+@{
+    ViewBag.Title = "Thêm câu hỏi mới";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<h2>THÊM CÂU HỎI MỚI</h2>
+
+@using (Html.BeginForm("Create", "Question", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <div class="form-horizontal">
+
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CourseId)
+            @*@Html.HiddenFor(model => model.PostId)*@
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.QuestionContent, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.QuestionContent, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.QuestionContent, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Option1, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Option1, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Option1, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Option2, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Option2, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Option2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Option3, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Option3, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Option3, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Option4, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Option4, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Option4, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @*<div class="form-group">
+            @Html.LabelFor(model => model.Answer, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Answer, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+            @*<select id="Answer" name="Answer">
+            <option value="Option1">Phương án 1</option>
+            <option value="Option2">Phương án 2</option>
+            <option value="Option3">Phương án 3</option>
+            <option value="Option4">Phương án 4</option>
+        </select>*@
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AnswerExplain, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.AnswerExplain, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.AnswerExplain, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <script>
+                var editor1 = CKEDITOR.replace('QuestionContent', { width: '100%', height: '150' });
+                var editor2 = CKEDITOR.replace('Option1', { width: '100%', height: '100' });
+                var editor3 = CKEDITOR.replace('Option2', { width: '100%', height: '100' });
+                var editor4 = CKEDITOR.replace('Option3', { width: '100%', height: '100' });
+                var editor5 = CKEDITOR.replace('Option4', { width: '100%', height: '100' });
+                //var editor6 = CKEDITOR.replace('Answer', { width: '100%', height: '100' });
+                var editor7 = CKEDITOR.replace('AnswerExplain', { width: '100%', height: '100' });
+            </script>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Answer, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Answer, new List<SelectListItem>
+                    {
+                        new SelectListItem{ Text="Phương án 1", Value = "Option1" },
+                        new SelectListItem{ Text="Phương án 2", Value = "Option2" },
+                        new SelectListItem{ Text="Phương án 3", Value = "Option3" },
+                        new SelectListItem{ Text="Phương án 4", Value = "Option4" },
+                     })
+                    @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Trạng thái câu hỏi:", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    <label class="switch">
+                        <input type="checkbox" id="Status" name="Status" value="@(Model.Status == true ? "true" : "false")" @(Model.Status == true ? "checked" : "") class="success">
+                        <span class="slider"></span>
+                    </label>
+
+                    <p id="showstatus" style="display:inline">Đăng ngay</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div style="float:left; margin-right: 20px;">
+                    <input type="submit" value="Lưu" class="btn btn-warning" />
+                </div>
+                <div style="float:left">
+                    @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+
+        </div>
+        </div>
+}
+
+<script>
+    
+    $('#Status').change(function () {
+        var x = $('#Status').prop("checked");
+        if (x == true) {
+            $('#showstatus').text(' Đăng ngay');
+            $('#Status').val('true');
+        }
+        else if (x == false) {
+            $('#showstatus').text(' Đăng nháp (không hiển thị)');
+            $('#Status').val('false');
+        }
+    });
+   
+</script>

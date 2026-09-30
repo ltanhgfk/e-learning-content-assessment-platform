@@ -1,0 +1,126 @@
+﻿@model List<LmpSystem.Models.Category>
+
+@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+
+@{    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    GetData data = new GetData();
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = "Danh sách bài viết theo danh mục gốc " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = "danh sách bài viết theo danh mục gốc";
+    }
+
+    //var postbysubcateid = db.PostRepository.GetAll().Where(m => m.CateId == subcateId && m.Status == true).ToList();
+    var keyword = "";
+}
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .active_subcate {
+            background-color: #FFCC00 !important;
+            color: #000;
+        }
+    </style>*@
+
+@*<script>
+        $(document).ready(function () {
+            $("#@subcateId").removeClass("df");
+            $("#@subcateId").addClass("active_subcate");
+        });
+    </script>*@
+
+
+<div class="single_post_content">
+    <ul>
+        @*//data.GetSubCategories(cateId)) //Convert.ToInt32(Request.QueryString["id"])*@
+        @foreach (var item in Model)
+        {
+            <li class="cat-item">
+                <a id="@item.Id" href="@Url.Action("PostBySubCate", "Home", new { subcateid = @item.Id, subcatename = data.GenerateFriendlyName(item.Name.Trim()) })" title="@item.Name">
+                    @item.Name
+                </a>
+            </li>
+            keyword = keyword + @item.Name + ", ";           
+        }
+        @{
+            //ViewBag.Keywords = "ok con de, tu khoa, lap trinh, trai tim";
+            var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+            if (google_seo_keyword != null)
+            {
+                ViewBag.Keywords = google_seo_keyword.Link + ", " + keyword;
+            }
+            else
+            {
+                ViewBag.Keywords = keyword;
+            }
+        }
+    </ul>
+</div>
+
+@*data.GetSubCategories(cateId)) //Convert.ToInt32(Request.QueryString["id"])*@
+@foreach (var itemsub in Model)
+{
+    <div class="callout top-left">@itemsub.Name</div>
+    <div class="single_post_content_other_cate">
+        @{
+            var postbyothersubcateid = db.PostRepository.GetAll().Where(m => m.CateId == itemsub.Id).ToList(); @*Where(m => m.PostType != "other" && m.PostType != "course" && m.PostType != "news" && m.PostType != "inform").*@
+        }
+        @if (postbyothersubcateid.Count >= 1)
+        {
+            <div class="row">`
+                <div class="business_catgnav wow fadeInDown">
+                    @for (int i = 1; i < postbyothersubcateid.Count; i++)
+                    {
+                        <div class="col-lg-6 col-md-6 col-sm-6" style="margin-top:20px;">
+                            <figure class="bsbig_fig">
+                                <a href='@Url.Action("PostDetail", "Home", new { postid = @postbyothersubcateid[i].Id, postname = data.GenerateFriendlyName(@postbyothersubcateid[i].Name.Trim()) })' class="featured_img" title="@postbyothersubcateid[i].Name"> <img alt="@postbyothersubcateid[i].Name" src="~/Upload/images/@postbyothersubcateid[i].Avatar"> <span class="overlay"></span> </a>
+                                
+                                <p class="big_sub_post_info"> @*<i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", @postbyothersubcateid[i].LastModifiedOnDate)*@   <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)@postbyothersubcateid[i].UserId) <a href='@Url.Action("PostBySubCate", "Home", new { subcateid = @postbyothersubcateid[i].CateId, subcatename = data.GenerateFriendlyName(@postbyothersubcateid[i].Name.Trim()) })'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(@postbyothersubcateid[i].CateId).Name</a></p>
+                                <figcaption> <a href='@Url.Action("PostDetail", "Home", new { postid = @postbyothersubcateid[i].Id, postname = data.GenerateFriendlyName(@postbyothersubcateid[i].Name.Trim()) })' title="@postbyothersubcateid[i].Name">@postbyothersubcateid[i].Name</a> </figcaption>                            
+                                @*<p>
+                                    @if (@postbyothersubcateid[i].Resume.Length > 150)
+                                    {
+                                        @postbyothersubcateid[i].Resume.Substring(0, 150);
+                                    }
+                                    else
+                                    {
+                                        @postbyothersubcateid[i].Resume;
+                                    }...
+                                </p>*@
+                            </figure>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @*<div class="single_post_content_right">
+                <ul class="spost_nav">
+                    @for (int i = 1; i < postbyothersubcateid.Count; i++)
+                    {
+                        <li>
+                            <div class="media wow fadeInDown">
+                                <a href='@Url.Action("PostDetail", "Home", new { postid = @postbyothersubcateid[i].Id , postname = data.GenerateFriendlyName(@postbyothersubcateid[i].Name.Trim())})' class="media-left" title="@postbyothersubcateid[i].Name"> <img alt="@postbyothersubcateid[i].Name" src="~/Upload/images/@postbyothersubcateid[i].Avatar"> </a>
+                                <div class="media-body">
+                                    <a href='@Url.Action("PostDetail", "Home", new { postid = @postbyothersubcateid[i].Id , postname = data.GenerateFriendlyName(@postbyothersubcateid[0].Name.Trim())})' class="catg_title" @postbyothersubcateid[i].Name>@postbyothersubcateid[i].Name</a>
+                                    <p class="small_sub_post_info"><i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", @postbyothersubcateid[i].LastModifiedOnDate) <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)@postbyothersubcateid[i].UserId) <a href='@Url.Action("PostBySubCate", "Home", new { subcateid = @postbyothersubcateid[i].CateId, subcatename = data.GenerateFriendlyName(@postbyothersubcateid[i].Name.Trim())})'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(@postbyothersubcateid[i].CateId).Name</a></p>                                   
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>*@
+        }
+    </div>
+}

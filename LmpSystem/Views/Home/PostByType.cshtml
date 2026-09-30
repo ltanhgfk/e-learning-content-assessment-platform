@@ -1,0 +1,131 @@
+﻿@using System.Net
+@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+@{
+    ViewBag.Title = "Danh sách "+ ViewBag.type;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    GetData data = new GetData();
+
+    //int tagId = Convert.ToInt32(Request.QueryString["tagid"]);//Request.Params["subcateId"] => hok được
+    string type = ViewBag.type;
+
+    Enum.TryParse(type, out PostType Post_Type);
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = Function.GetEnumDisplayName(Post_Type) + " - " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = Function.GetEnumDisplayName(Post_Type);
+    }
+
+    //Tag model = db.TagRepository.FindByID(tagId);
+    //List<SelectListItem> post = db.PostRepository.GetAll().Where(m => m.Status == true && (m.PostType == "special" || m.PostType == "article")).OrderByDescending(m => m.LastModifiedOnDate).ToList().GetData.GetListPost();
+    //List<SelectListItem> post = db.PostRepository.GetAll().Where(m => m.Status == true && (m.PostType == "special" || m.PostType == "article")).OrderByDescending(m => m.LastModifiedOnDate)//.OrderBy(m => m.Position)//them dieu kien sau nay...
+    //            .Select(m =>
+    //            new SelectListItem
+    //            {
+    //                Text = m.Name,
+    //                Value = m.Id.ToString(),
+    //            }
+    //            ).ToList();
+    //List<Post> listPostbyTag = new List<Post>();
+    //foreach (var x in post)
+    //{
+    //    //foreach (var t in model.PostTags)
+    //    foreach (var t in model.Posts)
+    //    {
+    //        if (x.Value == t.Id.ToString())
+    //        {
+    //            //x.Selected = true;
+    //            listPostbyTag.Add(db.PostRepository.FindByID(t.Id));
+    //        }
+    //    }
+    //}
+
+    var keyword = "";
+    var listPostByType = data.GetPostByType(type).ToList();
+}
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+    .active_subcate {
+        background-color: #FFCC00 !important;
+        color: #000;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $("#@tagId").removeClass("none");
+        $("#@tagId").addClass("active_subcate");
+    });
+</script>*@
+
+@*<div class="single_post_content">
+    <ul>
+        @foreach (var item in data.GetTagList()) 
+        {
+            <li class="cat-item">
+                <a id="@item.TagID" class="none" href="@Url.Action("PostByTagType","Home", new { tagid = @item.TagID , tagname = data.GenerateFriendlyName(item.TagName.Trim()) })" title="@item.TagName">
+                    @item.TagName
+                </a>
+            </li>
+            keyword = keyword + @item.TagName + ", ";
+        }
+        @{           
+            var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+            if (google_seo_keyword != null)
+            {
+                ViewBag.Keywords = google_seo_keyword.Link + ", " + keyword;
+            }
+            else
+            {
+                ViewBag.Keywords = keyword;
+            }
+        }
+    </ul>
+</div>*@
+
+@if(listPostByType.Count >= 1) 
+{ 
+<div class="single_post_content">
+    <h2><span>@Function.GetEnumDisplayName(Post_Type)</span></h2>
+    <div class="row">
+        @foreach (var item in listPostByType)
+        {
+            <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top:5px;">
+                @*<a href='@Url.Action("PostDetail","Home",new {postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>*@
+                <div class="media-body">
+                    <a href='@Url.Action("PostDetailByType","Home",new {postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name"> 
+                        &raquo; @item.Name <span class="big_sub_post_info">(@String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate) - @data.GetFullnameByUserId((int)item.UserId))</span>
+                    </a>
+                    @*<p class="small_sub_post_info">  &nbsp;<a href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim())})'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(item.CateId).Name</a></p>*@
+                
+</div>
+                <hr />
+            </div>
+        }
+
+        @*@foreach (var item in db.PostRepository.GetAll().Select(Tags).ToList()) //Convert.ToInt32(Request.QueryString["id"])
+            {
+                <li class="cat-item">
+                    <a id="@item..TagID" class="none" href="@Url.Action("PostByTag","Home", new { tagid = @item.TagID })">
+                        @item.TagName
+                    </a>
+                </li>
+            }*@
+    </div>
+</div>
+}
+else
+{
+    <p class="catg_title"> &raquo; Chưa có bài viết nào có chứa thẻ này! </p>
+}

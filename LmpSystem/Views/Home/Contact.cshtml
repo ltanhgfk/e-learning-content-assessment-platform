@@ -1,0 +1,89 @@
+﻿@model LmpSystem.Models.Feedback
+@using LmpSystem.Common
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    GetData data = new GetData();
+    var web_name = data.GetLmpInfoByCode("web_name");
+    var googlemap = data.GetLmpInfoByCode("googlemap");//[Display(Name = "Google map")]
+    var contact_info = data.GetLmpInfoByCode("contact_info_list");
+
+    var name = "";
+    if (web_name != null)
+    {
+        //name = web_name.Name;
+        ViewBag.Title = "Gửi thông tin liên hệ với " + web_name.Name;
+    }
+    else
+    {
+        //name = "chúng tôi";
+        ViewBag.Title = "Gửi thông tin liên hệ với chúng tôi";
+    }
+
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link;
+    }
+}
+
+<div class="contact_area">
+    <p>
+        @if (@contact_info != null)
+        {
+            @Html.Raw(@contact_info.Content)
+        }
+    </p>
+    <h2>GỬI THÔNG TIN LIÊN HỆ</h2>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Họ tên", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Chủ đề", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Email", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", required = "required", type = "email" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Nội dung liên hệ", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Gửi" class="btn btn-warning" />
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (googlemap != null)
+    {
+        @Html.Raw(googlemap.Content)
+    }
+
+</div>

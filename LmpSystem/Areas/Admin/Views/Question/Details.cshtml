@@ -1,0 +1,114 @@
+﻿@model LmpSystem.ViewModels.QuestionViewModel
+
+@{
+    ViewBag.Title = "Chi tiết câu hỏi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<h2>CHI TIẾT CÂU HỎI</h2>
+<div class="container">
+    <table class="table table-hover">
+        @*<thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                </tr>
+            </thead>*@
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.QuestionContent)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.QuestionContent)*@
+                    @Html.Raw(Model.QuestionContent)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Option1)
+                </td>
+                <td>
+                    @Html.Raw(Model.Option1)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Option2)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Option2)*@
+                    @Html.Raw(Model.Option2)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Option3)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Option3)*@
+                    @Html.Raw(Model.Option3)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Option4)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Option4)*@
+                    @Html.Raw(Model.Option4)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Answer)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Answer)*@
+                    @Html.Raw(Model.Answer)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.AnswerExplain)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.AnswerExplain)*@
+                    @Html.Raw(Model.AnswerExplain)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Status)
+                    @(Model.Status==true? "Đã được duyệt":"Chưa được duyệt")
+                </td>
+            </tr>
+
+            @*<tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.LessonTags)
+                </td>
+                <td>
+                    @foreach (var item in Model.LessonTags)
+                    {
+                        @item.LessonId @item.TagId
+                    }
+                </td>
+            </tr>*@            
+
+        </tbody>
+    </table>
+
+</div>
+
+<div class="form-group">
+    <div style="float:left; margin-right: 20px;">
+        @Html.ActionLink("Cập nhật", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
+    </div>
+    <div style="float:left">
+        @Html.ActionLink("Quay lại", "Index","Question", new { postid = Model.PostId, lessonid = Model.LessonId }, new { @class = "btn btn-primary" })
+    </div>
+</div>

@@ -1,0 +1,85 @@
+﻿@model List<LmpSystem.ViewModels.PostDetailViewModel>
+
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using LmpSystem.Common
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //ViewBag.Title = "Làm bài kiểm tra trắc nghiệm";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    GetData data = new GetData();
+
+    //var avgRating = Model.Reviews.Average(m => m.Rating);
+    //var course_banner = data.GetLmpInfoByCode("home_banner");
+
+    //int cateId = -1;
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = "Đề kiểm tra trắc nghiệm trên " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = "Đề kiểm tra trắc nghiệm";
+    }
+
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link;
+    }
+}
+
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+@if (Model.Count() >= 1)
+{
+    <div class="single_post_content">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <a href='@Url.Action("TestQuiz", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                    <div class="media-body">
+                        <a href='@Url.Action("TestQuiz", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name"> @item.Name</a>
+                        <p class="small_sub_post_info"> @*<i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate)*@   <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)item.UserId) &nbsp;<a href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim()) })'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(item.CateId).Name</a></p>
+                        @*<p>@Html.Raw(item.Resume)</p>*@
+                    </div>
+                    <hr />
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p class="catg_title"> &raquo; Chưa có bài viết nào trong mục này! </p>
+}
+
+@*@if(Model.Count() >= 1)
+    {
+        <div class="single_post_content">
+            <div class="single_post_content_other_cate">
+                @{
+                    int i = 1;
+                    foreach (var item in Model)
+                    {
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="media-body">
+                                    <img />
+                                    <i class='fas fa-angle-double-right' ></i> <a href='@Url.Action("TestQuiz", "Home", new { postid = item.Id})' class="catg_title" title="@item.Name" style="font-weight: bold"> @item.Name</a>
+                                    <p style="color:#888; font-size: 9pt;">@Html.Raw(item.Resume)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        i++;
+                    }
+                }
+            </div>
+        </div>
+    }*@

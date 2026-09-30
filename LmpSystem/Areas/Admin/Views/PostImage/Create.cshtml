@@ -1,0 +1,50 @@
+﻿@model LmpSystem.ViewModels.PostImageCreateViewModel
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<h2>THÊM HÌNH MỚI</h2>
+
+@using (Html.BeginForm("Create", "PostImage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <div class="form-horizontal">
+            @Html.HiddenFor(model => model.PostId)
+
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.ImageFiles, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.ImageFiles, "", new { @type = "file", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(model => model.ImageFiles, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="gallery col-md-12" style="text-align: center; margin: 20px; ">
+                    <img class="img-responsive" style="width:200px; height:200px; text-align:center" id="avtpreview" src="~/Upload/images/no-image.png" alt="Ảnh đại diện" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 text-success">
+                    @ViewBag.UploadStatus
+                </div>
+            </div>            
+
+            <div class="form-group">
+                <div style="float:left; margin-right: 20px;">
+                    <input type="submit" value="Lưu" class="btn btn-warning" />
+                </div>
+                <div style="float:left">
+                    @Html.ActionLink("Quay lại danh sách", "Index", new { id = Model.PostId }, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+
+        </div>
+    </div>
+}

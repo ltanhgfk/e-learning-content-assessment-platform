@@ -1,0 +1,260 @@
+﻿@model IEnumerable<LmpSystem.ViewModels.QuestionViewModel>
+
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using LmpSystem.Common
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //ViewBag.Title = "Làm bài kiểm tra trắc nghiệm";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    GetData data = new GetData();
+
+    //var avgRating = Model.Reviews.Average(m => m.Rating);
+    //var course_banner = data.GetLmpInfoByCode("home_banner");
+
+    //int cateId = -1;    
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = "Làm bài kiểm tra trắc nghiệm trên " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = "Làm bài kiểm tra trắc nghiệm";
+    }
+
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link;
+    }
+
+}
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+<script>
+    // Create an object:
+    const answer = {
+        qId: 0,
+        yourAns: 'Option0',
+        trueAns: 'Option0'
+    };
+
+    var answer_array = new Array(answer);
+
+    var score = 0;
+
+    function Engine(stt, questionId, trueAnswer, yourAnswer) {
+        //alert("Stt: " + stt + ", questionId: " + questionId + ", cau dung: " + trueAnswer + ", tra loi" + yourAnswer);
+        if (trueAnswer == "" || trueAnswer == null) {
+            //ans[question] = "Câu hỏi thiếu đáp án!"
+            alert("Câu hỏi bị lỗi!");
+            return false;
+        }
+
+        answer_array[stt] = { qId: questionId, trueAns: trueAnswer, yourAns: yourAnswer };
+    }
+
+</script>
+
+<div class="single_post_content">
+    <h2><span>LÀM BÀI TRẮC NGHIỆM</span></h2>
+    @*<h3><span>@db.PostRepository.FindByID((int)ViewBag.postid).Name </span></h3>*@
+    <span><a href="/danh-muc-chinh-trac-nghiem-12" style="">&laquo; Quay lại</a></span>
+    @*@using (Html.BeginForm("TestQuiz", "Home", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-inline" }))
+        {
+            <label style="display:inline-block;font-weight:normal;">
+                @Html.DropDownList("questioncate", new SelectList((IEnumerable<SelectListItem>)ViewBag.ParentCateList, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
+                <input style="margin-left:10px; margin-top: 4px; border-radius: 5px" class="btn btn-info" type="submit" value="Tìm kiếm" />
+            </label>
+        }*@
+</div>
+
+@if (Model.Count() >= 1)
+{
+    <!--================Start Course Details Area =================-->
+<div class="related_post" style="margin-left: 2px;">
+    <h2></h2>
+    @using (Html.BeginForm("TestQuiz", "Home", FormMethod.Post))
+    {
+        @Html.Hidden("PostId")
+        @Html.Hidden("LessonId")
+
+        @*@Html.Hidden("UserName")
+          @Html.Hidden("Email")*@
+
+        @Html.Hidden("TestDetail")
+        @Html.Hidden("TrueNumberAnswer")
+        @Html.Hidden("TotalNumberQuestion")
+
+        if (Model != null)
+        {
+            //int i = 1;
+            var t = 0;
+            foreach (var item in Model)
+            {
+                t++;
+                <div class="row" style="margin-top: 20px; font-weight: bold">
+                    <div class="col-lg-1 col-md-1 col-sm-1">&nbsp;@t.</div>
+                    <div class="col-lg-10 col-md-10 col-sm-10">
+                        @Html.Raw(@item.QuestionContent)
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 5px;">
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        <input type="radio" value="Option1" name="q&@t" onclick="Engine(@t, @item.Id,'@item.Answer', this.value)" style="height:15px; width:15px;" />
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option1)
+                    </div>
+                    @*</div>
+                        <div class="row">*@
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        <input type="radio" value="Option2" name="q&@t" onclick="Engine(@t, @item.Id,'@item.Answer', this.value)" style="height:15px; width: 15px;" />
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option2)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        <input type="radio" value="Option3" name="q&@t" onclick="Engine(@t, @item.Id,'@item.Answer', this.value)" style="height: 15px; width: 15px;" />
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option3)
+                    </div>
+                    @*</div>
+                        <div class="row">*@
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        <input type="radio" value="Option4" name="q&@t" onclick="Engine(@t, @item.Id,'@item.Answer', this.value)" style="height: 15px; width: 15px;" />
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option4)
+                    </div>
+                </div>
+
+                <script>
+                        answer_array[@t] = { qId: @item.Id, trueAns: "--", yourAns: "--" };
+                </script>
+
+                //if (cateId == -1)
+                //{
+                //    cateId = (int)item.CateId;
+                //}
+                <hr />
+            }
+        }
+        else
+        {
+            <div>Chưa có câu hỏi</div>
+        }
+
+        <div class="row" style="margin-left: 2px;">
+            @*<hr />*@
+            @Html.TextBox("UserName", "", new { @placeholder = "Nhập họ tên", required = "required" })
+            @Html.TextBox("Email", "", new { @placeholder = "Nhập Email", required = "required", type = "email" })
+
+            <input type="submit" id="btnSaveCart" value="Xem kết quả" /> @*onclick="Score()"*@
+        </div>
+        @*<div class="row" style="margin-top: 10px;">
+            </div>*@
+    }
+</div>
+    <!--================ End Course Details Area =================-->
+}
+
+<script>
+    var answerText = "Kết quả trả lời của bạn\n\n <br/>";
+    var questionAnswerList = "";
+
+        //$(document).ready(function () {
+
+    $('#btnSaveCart123').click(function () {
+        var t = @Model.Count();
+        for (i = 1; i <= t; i++) {
+            alert("ok con de: " + i);
+            alert(answer_array[i].qId + " - " + answer_array[i].trueAns + " - " + answer_array[i].yourAns);
+
+            //if (answer_array[i] == null) {
+            //    alert("khong tra loi");
+            //    alert(answer_array[i].qId + " - " + answer_array[i].trueAns + " - " + answer_array[i].yourAns);
+            //} else {
+            //    alert(answer_array[i].qId + " - " + answer_array[i].trueAns + " - " + answer_array[i].yourAns);
+            //}
+        }
+    });
+
+    $('#btnSaveCart').click(function () {
+
+        if ($("#txtUserName").val() == "") {
+            alert("Cần nhập họ tên!");
+            return false;
+        }
+        else if ($("#txtEmail").val() == "") {
+            alert("Cần nhập email!");
+            return false;
+        }
+
+        //$("#email").val() = $("#txtEmail").val();
+
+        var t = @Model.Count();
+
+        //alert("Number question: " + t);
+        //var Diem = 0;
+        //answerText = answerText + "Bạn trả lời đúng " + score + " / " + t + " câu hỏi! <br/>";
+
+        for (i = 1; i <= t; i++) {
+            //questionAnswerList = questionAnswerList + "quesId:" + answer_array[i].qId + ":yourAns:" + answer_array[i].yourAns + ":finish:";
+            questionAnswerList = questionAnswerList + answer_array[i].qId + ":" + answer_array[i].yourAns + "#";
+            //alert(answer_array[i].qId + " - " + answer_array[i].trueAns + " - " + answer_array[i].yourAns);
+        }
+
+        //alert(questionAnswerList);
+
+        for (i = 1; i <= t; i++) {
+            //alert("Score2: " + score);
+            //alert(t);
+
+            answerText = answerText + "\nCâu: " + i + "";
+            if (answer_array[i].trueAns != "--" || answer_array[i].yourAns != "--") {
+                if (answer_array[i].trueAns != answer_array[i].yourAns) {
+                    answerText = answerText + "\nCâu trả lời của bạn là: " + answer_array[i].yourAns + "\nCâu trả lời đúng là: " + answer_array[i].trueAns + "\n <br/>";
+                }
+                else {
+                    answerText = answerText + "\nCâu trả lời của bạn là: " + answer_array[i].yourAns + "\nBạn trả lời đúng! \n </br>";
+                    score++;
+                }
+            }
+            else answerText = answerText + "\nBạn không trả lời!\n <br/>";
+        }
+
+        //$("#CateId").val(cateId);
+
+        $("#PostId").val(@Request.QueryString["postid"]);
+         $("#LessonId").val(@Request.QueryString["lessonid"]);
+        $("#TestDetail").val(questionAnswerList);
+        $("#TrueNumberAnswer").val(score);
+        $("#TotalNumberQuestion").val(t);
+
+        alert("Bạn trả lời đúng " + score + "/" + t + " câu hỏi!");
+
+        //alert(answerText);
+
+        @*alert("Cate: " +@cateId);
+        alert("userName: " + $("#txtUserName").val());
+        alert("email: " + $("#txtEmail").val());
+        alert("testDetail: " + answerText);
+        alert("TrueNumberAnswer :" + score);
+        alert("TotalNumberQuestion :" + t);*@
+
+    });
+
+</script>

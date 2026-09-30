@@ -1,0 +1,152 @@
+﻿@*@model LmpSystem.Models.Feedback
+@{
+    ViewBag.Title = "Cập nhật feedback";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+    LmpSystem.Common.GetData data = new LmpSystem.Common.GetData();
+}*@
+
+@model IEnumerable<LmpSystem.ViewModels.QuestionViewModel>
+
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using LmpSystem.Common
+@{
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Chi tiết bài làm trắc nghiệm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    GetData data = new GetData();
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = "Kết quả bài kiểm tra trắc nghiệm môn " + ViewBag.MonHoc + " trên " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = "Kết quả bài kiểm tra trắc nghiệm môn " + ViewBag.MonHoc;
+    }
+
+    //var avgRating = Model.Reviews.Average(m => m.Rating);
+    //var course_banner = data.GetLmpInfoByCode("home_banner");
+
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link + ", " + ViewBag.MonHoc;
+    }
+
+}
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+@*<div class="single_post_content">
+        <h2></h2>
+        @using (Html.BeginForm("TestQuiz", "Home", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-inline" }))
+        {
+            <label style="display:inline-block;font-weight:normal;">
+                <span>Chọn Môn thi: </span>
+                @Html.DropDownList("questioncate", new SelectList((IEnumerable<SelectListItem>)ViewBag.ParentCateList, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
+                <input style="margin-left:0px" class="btn btn-info" type="submit" value="Tìm kiếm" />
+            </label>
+        }
+    </div>*@
+
+@if (Model.Count() >= 1)
+{
+    <!--================Start Course Details Area =================-->
+    <div class="related_post" style="margin-left: 2px;">
+        <h2><span>KẾT QUẢ BÀI KIỂM TRA TRẮC NGHIỆM</span></h2>
+        <p>Họ tên: @ViewBag.HoVaTen, email: @ViewBag.Email</p>
+        <p>Môn học: @ViewBag.MonHoc, Ngày giờ: @ViewBag.NgayGioLamKT</p>
+        <p>Số câu đúng: @ViewBag.SoCauDung / Tổng số câu: @ViewBag.TongSoCau</p>
+        <hr />
+        @if (Model != null)
+        {
+            //int i = 1;
+            var t = 0;
+            foreach (var item in Model)
+            {
+                t++;
+                <div class="row" style="margin-top: 20px; font-weight: bold">
+                    <div class="col-lg-1 col-md-1 col-sm-1"><i style='font-size:15px' class='fas'>&#xf0ae;</i> @t.</div>
+                    <div class="col-lg-10 col-md-10 col-sm-10">
+                        @Html.Raw(@item.QuestionContent)
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 5px;">
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        a
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option1)
+                    </div>
+                    @*</div>
+                        <div class="row">*@
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        b
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option2)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        c
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option2)
+                    </div>
+                    @*</div>
+                        <div class="row">*@
+                    <div class="col-lg-1 col-md-1 col-sm-1">
+                        d
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        @Html.Raw(@item.Option2)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3" style="font-weight:bold">
+                        <span>Phương án bạn chọn: </span>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Html.Raw(@item.YourAnswer)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3" style="font-weight:bold">
+                        <span>Phương án đúng:  </span>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Html.Raw(@item.Answer)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3" style="font-weight:bold">
+                        <span>Diễn giải đáp án:</span>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Html.Raw(item.AnswerExplain)
+                    </div>
+                </div>
+                <hr />
+            }
+        }
+
+        @*<div class="row" style="margin-left: 2px;">
+                <hr />
+                <input type="submit" id="btnSaveCart" value="" />
+            </div>*@
+
+    </div>
+    <!--================ End Course Details Area =================-->
+}
+
+<div class="form-group">    
+    <div style="float:left">
+        @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+

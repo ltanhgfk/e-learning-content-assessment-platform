@@ -1,0 +1,84 @@
+﻿@model PagedList.IPagedList<LmpSystem.Models.Post>
+@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using PagedList.Mvc;
+@using System.Globalization
+
+@{
+    //ViewBag.Title = "Kết quả tìm kiếm bài viết";
+    GetData data = new GetData();
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = "Kết quả tìm kiếm bài viết trên " + web_name.Name;  //Request.Params["subcateId"] => hok được        
+    }
+    else
+    {
+        ViewBag.Title = "Kết quả tìm kiếm bài viết";
+    }
+
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link;
+    }
+}
+
+<div class="callout top-left">Kết quả tìm kiếm với từ khóa: "@ViewBag.searchStr"</div>
+<div class="single_post_content_other_cate">
+    @if (Model.Count >=1)
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top:5px;">
+                    <div class="media wow fadeInDown">
+                        <a href='@Url.Action("PostDetail", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim())})' class="media-left"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                        <div class="media-body">
+                            <a href='@Url.Action("PostDetail", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name"> @item.Name</a>                            
+                            <p class="small_sub_post_info"> @*<i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate)*@   <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)item.UserId) &nbsp;<a href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim()) })'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(item.CateId).Name</a></p>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="catg_title"> &raquo; Không có bài viết nào thỏa mãn tiêu chí tìm kiếm! </p>
+    }
+    <!--Khu link phan trang-->
+    <div style="margin-top:20px">
+        <div class="col-12">
+            <div class="card-title">
+                @*Trang @Model.PageNumber/@Model.PageCount
+                    @if (Model.PageNumber > 1)
+                    {
+                        <h3 class="card-title">
+                            Trang thứ @Model.PageNumber
+                        </h3> }
+                    else
+                    {
+                        <h3 class="card-title">
+                            Trang đầu tiên
+                        </h3>}*@
+
+                @{ if (Model.PageCount > 1)
+                    {
+                        <nav id="pagelistpost" aria-label="Page navigation example">
+                            @Html.PagedListPager(Model, page => Url.Action("SearchPost", new { page, search_input = ViewBag.searchStr }), new PagedListRenderOptions { UlElementClasses = new string[] { "pagination" }, LiElementClasses = new string[] { "page-item" } })
+                        </nav>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <!--het link phan trang-->
+
+</div>
+

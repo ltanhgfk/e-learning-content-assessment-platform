@@ -1,0 +1,152 @@
+﻿@model LmpSystem.ViewModels.LmpInfoEditViewModel
+
+@{
+    ViewBag.Title = "Thêm thông tin mới";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<h2>Thêm mới thông tin website</h2>
+
+@using (Html.BeginForm("Create", "LmpInfo", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.CodeList, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.CodeList, htmlAttributes: new { @class = "form-control", required = "required" })
+                @Html.ValidationMessageFor(model => model.CodeList, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-10">            
+            @Html.DropDownListFor(model => model.Code, new SelectList(ViewBag.CodeList, "Value", "Text"), new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Link, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Link, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Link, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Ảnh đại diện: ", htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-10">
+            <input type="file" id="AvatarFile" name="AvatarFile" class="form-control-file" />
+            @*@Html.ValidationMessageFor(model => model.AvatarFile, "", new { @class = "text-danger" })*@
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-10" style="text-align:center">
+            <img class="img-responsive" style="max-width:150px;text-align:center" id="avtpreview" src="~/Upload/images/no-image.png" alt="Ảnh đại diện" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <script>
+        var editor = CKEDITOR.replace('Content', { width: '100%', height: '600' });
+    </script>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <label class="switch">
+                <input type="checkbox" id="Status" name="Status" value="@(Model.Status == true ? "true" : "false")" @(Model.Status == true ? "checked" : "") class="success">
+                <span class="slider"></span>
+            </label>
+            <p id="showstatus" style="display:inline"> Đăng thông tin ngay (hiển thị)</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div style="float:left; margin-right: 20px;">
+            <input type="submit" value="Lưu" class="btn btn-warning" />
+        </div>
+        <div style="float:left">
+            @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+
+</div>
+}
+
+<script>
+
+    $("#post_type").change(function () {
+        var type = this.value;
+        if (type == 2) {
+            $('#imganno').show();
+        }
+        else {
+            $('#imganno').hide();
+        }
+    });
+
+    $('#Status').change(function () {
+        var x = $('#Status').prop("checked");
+        if (x == true) {
+            $('#showstatus').text(' Đăng thông tin ngay');
+            $('#Status').val('true');
+        }
+        else if (x == false) {
+            $('#showstatus').text(' Lưu thông tin (không hiển thị)');
+            $('#Status').val('false');
+        }
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#avtpreview').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#AvatarFile").change(function () {
+        readURL(this);
+    });
+
+
+</script>

@@ -1,0 +1,130 @@
+﻿@model LmpSystem.ViewModels.LessonDetailViewModel
+
+@{
+    ViewBag.Title = "Chi tiết bài học";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<h2>CHI TIẾT BÀI HỌC</h2>
+<div class="container">   
+    <table class="table table-hover">
+        @*<thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Nội dung</th>
+            </tr>
+        </thead>*@
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Avatar)
+                </td>
+                <td>
+                    <img src="~/Upload/images/@Model.Avatar" style="width: 200px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Position)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Position)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Resume)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Resume)*@
+                    @Html.Raw(Model.Resume)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Content)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Content)*@
+                    @Html.Raw(Model.Content)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Video)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Video)*@
+                    @Html.Raw(Model.Video)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Exercises)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Exercises)*@
+                    @Html.Raw(Model.Exercises)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Status)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(model => model.Status)*@
+                    @(Model.Status==true? "Đã hiển thị":"Chưa hiển thị")
+                </td>
+            </tr>
+
+            @*<tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.LessonTags)
+                </td>
+                <td>
+                    @foreach (var item in Model.LessonTags)
+                    {
+                        @item.LessonId @item.TagId
+                    }
+                </td>
+            </tr>*@
+
+            @*<tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Questions)
+                </td>
+                <td>
+                    @foreach (var item in Model.Questions)
+                    {
+                    }
+                </td>
+            </tr>*@
+
+            @*<tr>
+            <td>
+                @Html.DisplayNameFor(model => model.UserScores)
+            </td>
+            <td>
+                @foreach (var item in Model.UserScores)
+                {
+                    @item.LessonId @item.Score @item.UserId;
+                }
+            </td>
+        </tr>*@
+
+        </tbody>
+    </table>
+    
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index", new { id = Model.Id })
+</p>

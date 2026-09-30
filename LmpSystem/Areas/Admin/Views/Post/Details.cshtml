@@ -1,0 +1,190 @@
+﻿@model LmpSystem.ViewModels.PostDetailViewModel
+
+@{
+    ViewBag.Title = "UserContents";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<h2>CHI TIẾT BÀI VIẾT</h2>
+<div class="container">
+    <table class="table table-hover">
+        @*<thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                </tr>
+            </thead>*@
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Avatar)
+                </td>
+
+                <td>
+                    <img src="~/Upload/images/@Model.Avatar" style="width: 200px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Code)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Code)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Title)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Title)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Status)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Status)
+                    @(Model.Status==true? "Đã được duyệt":"Chưa được duyệt")
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Username)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Username)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.CreatedByUserId)
+                </td>
+
+                <td>
+                    @*@Html.DisplayFor(model => model.CreatedByUserId)*@
+                    @ViewBag.CreatedByUser
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.CreatedOnDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.CreatedOnDate)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.LastModifiedByUserId)
+                </td>
+
+                <td>
+                    @*@Html.DisplayFor(model => model.LastModifiedByUserId)*@
+                    @ViewBag.LastModifiedByUser
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.LastModifiedOnDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.LastModifiedOnDate)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Resume)
+                </td>
+
+                <td>
+                    @Html.Raw(Model.Resume)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Content)
+                </td>
+
+                <td>
+                    @*@Html.DisplayFor(model => model.Content)*@
+                    @Html.Raw(Model.Content)
+                </td>
+            </tr>
+
+
+
+            @*<tr>
+            <td>
+                @Html.DisplayNameFor(model => model.Lessons)
+            </td>
+
+            <td>
+                @foreach (var item in Model.Lessons)
+                {
+                <span style="background: #ddd; margin-right: 5px">@item.Name;</span>
+                }
+            </td>
+        </tr>*@
+
+            @*<tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Reviews)
+                        </td>
+
+                        <td>
+                            @foreach (var item in Model.Reviews)
+                            {
+                                <span style="background: #ddd; margin-right:5px">
+                                    @item.Comment;
+                                </span>
+                                <span style="background: #ddd">
+                                    @item.Rating;
+                                    </span>
+                                    <span style="background: #ddd">
+                                        @item.LikeIt;
+                                        </span>
+                            }
+        </td>
+                    </tr>*@
+
+
+        </tbody>
+    </table>
+
+</div>
+
+<div class="form-group">
+    <div style="float:left; margin-right: 20px;">
+        @Html.ActionLink("Cập nhật", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    </div>
+    <div style="float:left">
+        @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@using LmpSystem.Common
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    //CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+
+    GetData data = new GetData();
+    var web_name = data.GetLmpInfoByCode("web_name");
+    var name = "";
+    if (web_name != null)
+    {
+        name = web_name.Name;
+        ViewBag.Title = "Gửi thông tin liên hệ với " + web_name.Name;
+    }
+    else
+    {
+        name = "chúng tôi";
+        ViewBag.Title = "Gửi thông tin liên hệ với chúng tôi";
+    }
+
+    var web_intro = data.GetLmpInfoByCode("web_intro");
+    var galeries = data.GetPostByType("galeries").Take(6).ToList();
+
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link;
+    }
+}
+
+<div class="contact_area">
+    <h2>CHÀO MỪNG ĐẾN VỚI <a href='@Url.Action("Index", "Home")' style="font-variant:small-caps; color:#fff">@name</a></h2>
+    @if (web_intro != null)
+    {
+        @Html.Raw(web_intro.Content);
+    }
+</div>
+
+<div class="single_post_content">
+    <h2><span>Hình ảnh hoạt động</span></h2>
+    <ul class="photograph_nav  wow fadeInDown">
+        @foreach (var item in galeries)
+        {
+            <li>
+                <div class="photo_grid">
+                    <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href='@Url.Action("PostDetail","Home",new {postid = @item.Id})' title="Photography Ttile 1"> <img src="~/Upload/images/@item.Avatar" alt="@item.Name" /></a> </figure>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+           
+  

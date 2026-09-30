@@ -1,0 +1,36 @@
+# Visual Studio / IDE
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.csproj.user
+*.pubxml
+*.pubxml.user
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# NuGet restored packages (regenerated from packages.config)
+packages/
+*.nupkg
+
+# Runtime-generated CKFinder uploads (contains real user-submitted content:
+# course images, lesson images, uploaded documents, thumbnail cache).
+# Folder structure is kept via .gitkeep; actual uploaded content is not tracked.
+LmpSystem/Upload/images/*
+!LmpSystem/Upload/images/.gitkeep
+LmpSystem/Upload/files/*
+!LmpSystem/Upload/files/.gitkeep
+LmpSystem/Upload/_thumbs/
+LmpSystem/Upload/flash/
+
+# App_Data (local SQL Server files, if ever generated locally)
+App_Data/*.mdf
+App_Data/*.ldf
+
+# OS files
+Thumbs.db
+.DS_Store

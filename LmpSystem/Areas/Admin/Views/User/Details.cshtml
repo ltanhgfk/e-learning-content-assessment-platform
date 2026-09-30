@@ -1,0 +1,263 @@
+﻿@model LmpSystem.ViewModels.UserDetailViewModel
+
+@{
+    ViewBag.Title = "UserDetail";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+    LmpSystem.Common.GetData data = new LmpSystem.Common.GetData();
+}
+
+<h2>CHI TIẾT NGƯỜI DÙNG</h2>
+<div class="container">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Nội dung</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Avatar)
+                </td>
+
+                <td>
+                    <img src="~/Upload/images/@Model.Avatar" style="width: 200px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Code)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Code)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Title)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Title)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Username)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Username)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.FirstName)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.LastName)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Password)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Password)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Gender)
+                </td>
+
+                <td>
+                    @*@(Model.Gender==true? "Nam":"Nữ")*@
+                    @Html.DisplayFor(model => model.Gender)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Birthday)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Birthday)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Phone)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Email)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Email)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Address)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Address)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Status)
+                </td>
+
+                <td>
+                    @(Model.Status==true? "Đã được duyệt":"Chưa được duyệt")
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.CreatedOnDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.CreatedOnDate)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.LastModifiedOnDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.LastModifiedOnDate)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.UserRole)
+                </td>
+
+                <td>
+                    @*@(Model.UserRole==1? "Admin":"User")*@
+                    @Html.DisplayFor(model => model.UserRole)
+                </td>
+            </tr>
+            @*<tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Department.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Department.Name)
+                </td>
+            </tr>*@
+
+            @*<tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Teachers)
+                    </td>
+
+                    <td>
+                        @foreach (var item in Model.Teachers)
+                        {
+                            @item.Name @item.Code @item.Title @item.Avatar;
+                        }
+                    </td>
+                </tr>*@
+
+            @*<tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Invoices)
+                    </td>
+
+                    <td>
+                        @foreach (var item in Model.Invoices)
+                        {
+                            @item.Orders.Select(m=>m.Post.Name)
+                        }
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Posts)
+                        </td>
+
+                        <td>
+                            @foreach (var item in Model.Posts)
+                            {
+                                @item.Name @item.Avatar
+                            }
+                        </td>
+                    </tr>*@
+
+            @*<tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Products)
+                    </td>
+
+                    <td>
+                        @foreach (var item in Model.Products)
+                        {
+                            @item.Avatar @item.Name @item.Price;
+                        }
+                    </td>
+                </tr>*@
+
+            @*<tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.UserScores)
+                    </td>
+
+                    <td>
+                        @foreach(var item in Model.UserScores)
+                        {
+                            @item.CourseId @item.LessonId @item.Score @item.Result;
+                        }
+                    </td>
+                </tr>*@
+        </tbody>
+    </table>
+</div>
+
+    <div class="form-group">
+        <div style="float:left; margin-right: 20px;">
+            @Html.ActionLink("Cập nhật", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+        </div>
+        <div style="float:left">
+            @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>    
+

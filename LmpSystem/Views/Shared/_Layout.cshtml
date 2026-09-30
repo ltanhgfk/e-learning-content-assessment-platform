@@ -1,0 +1,701 @@
+﻿@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+@{
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    GetData data = new GetData();
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");
+
+    /*Thong tin chung by Code*/
+    var web_name = data.GetLmpInfoByCode("web_name");
+    //ViewBag.Title = web_name.Name;
+    var google_seo_description = data.GetLmpInfoByCode("google_seo_description");
+    //var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    //ViewBag.Keywords = data.GetLmpInfoByCode("google_seo_keyword");
+    var web_logo = data.GetLmpInfoByCode("web_logo");
+    var footer_logo = data.GetLmpInfoByCode("footer_logo");
+    var web_slogan = data.GetLmpInfoByCode("web_slogan");
+    var top_menu_list = data.GetListLmpInfoByCode("top_menu_list");//menu đầu trang
+    var top_ad_banner = data.GetLmpInfoByCode("top_ad_banner");//[Display(Name = "Banner QC đầu trang")]
+    var main_menu_list = data.GetListLmpInfoByCode("main_menu_list");//[Display(Name = "Danh mục chính")]
+    var social_network_list = data.GetListLmpInfoByCode("social_network_list");// [Display(Name = "Mạng xã hội")]
+    var top_right_youtube_video = data.GetLmpInfoByCode("top_right_youtube_video");//[Display(Name = "Video giới thiệu (youtube)")]
+    var first_right_ad_banner = data.GetLmpInfoByCode("first_right_ad_banner");// [Display(Name = "Banner quảng cáo số 1 bên phải")]
+    var second_right_ad_banner = data.GetLmpInfoByCode("second_right_ad_banner");//[Display(Name = "Banner quảng cáo số 2 bên phải")]
+    var fanpage_facebook = data.GetLmpInfoByCode("fanpage_facebook");//[Display(Name = "Facebook Fanpage")]
+                                                                     //var googlemap = data.GetLmpInfoByCode("googlemap");//[Display(Name = "Google map")]
+    var copyright = data.GetLmpInfoByCode("copyright");//[Display(Name = "Dòng bản quyền (copyright)")]
+    var developed = data.GetLmpInfoByCode("developed");//[Display(Name = "Người phát triển (developer)")]
+    var contact_intro = data.GetLmpInfoByCode("contact_intro");//[Display(Name = "Giới thiệu trang liên hệ")]
+    var web_intro = data.GetLmpInfoByCode("web_intro");//[Display(Name = "Giới thiệu website")]
+    var contact_info_list = data.GetListLmpInfoByCode("contact_info_list");//[Display(Name = "Thông tin liên hệ (address, mail, phone)")]
+    var contact_info = data.GetLmpInfoByCode("contact_info_list");
+    var website_link_list = data.GetListLmpInfoByCode("website_link_list");//[Display(Name = "Liên kết website")]
+    var common_page_footer_list = data.GetListLmpInfoByCode("common_page_footer_list"); //[Display(Name = "Các trang tĩnh (link ở footer)")]
+    var teacher_list = data.GetListLmpInfoByCode("teacher_list");
+
+    /*****************************************/
+
+    /*Thong tin chinh cua web*/
+    var root_categories = data.GetRootCategories();
+    var news = data.GetPostByType("news").Take(9).ToList();//9 tin tuc moi nhat
+    var tags = data.GetTagList();
+    //var latestpost = db.PostRepository.GetAll().OrderByDescending(m=>m.LastModifiedOnDate).Take(6).ToList();//6 bai viet moi nhat > main slider
+    //var course = data.GetPostByType("course").Take(16).ToList();
+    //var other = data.GetPostByType("rightside").Take(16).ToList();
+    var inform = data.GetPostByType("inform").Take(9).ToList();
+    var job = data.GetPostByType("job").Take(9).ToList();
+    /*************************/
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8">
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <meta name="description" content="@google_seo_description" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @*<meta http-equiv="content-type" content="text/html; charset=utf-8">*@
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/font.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/li-scroller.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/slick.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/theme.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/style.css">
+
+    <!--[if lt IE 9]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script>
+        var today = new Date();
+        //var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    </script>
+
+    <style>
+        div.callout {
+            /*height: 60px;*/
+            /*width: 100%;*/
+            min-width: 100px;
+            float: left;
+            color: #333;
+            /*font-family: "Oswald", Arial, sans-serif;*/
+            font-size: 13pt;
+            /*font-weight: 600*/
+        }
+        /*#ffd62c*/
+        div.callout {
+            background-color: #ffd62c;
+            /*background-image: -moz-linear-gradient(top, #ffd62c, #ffd62c);*/
+            position: relative;
+            color: #000;
+            padding: 4px;
+            border-radius: 0px;
+            /*box-shadow: 0px 0px 20px #999;*/
+            /*margin-bottom: 25px;*/
+            /*min-height: 50px;*/
+            border: 1px solid #ffd62c;
+            /*text-shadow: 0 0 1px #000;*/
+            /*box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset;*/
+            text-align: center;
+        }
+
+        .callout::before {
+            content: "";
+            width: 0px;
+            height: 0px;
+            border: 0.8em solid transparent;
+            position: absolute;
+        }
+
+        .callout.top-left::before {
+            left: 7px;
+            bottom: -20px;
+            border-top: 10px solid #ffd62c;
+        }
+
+        /*.catg_title {*/
+        /*color: #000;*/
+        /*font-size: 14px;*/
+        /*font-family: Oswald, sans-serif;*/
+        /*font-weight: bold;*/
+        /*}*/
+
+        .catg_title {
+            color: #000;
+            font-size: 16px;
+            font-family: verdana, Arial, "Oswald", sans-serif;
+            /*font-weight: 550;*/
+            text-align: justify;
+        }
+
+            .catg_title:hover {
+                color: #ffd62c;
+                /*color: coral;*/
+                /*color: #F0AD4E;*/
+            }
+
+        .big_sub_post_info {
+            color: #2C3E50;
+            font-size: 10pt;
+        }
+
+            .big_sub_post_info a {
+                color: #2C3E50;
+            }
+
+        .small_sub_post_info {
+            /*color: #333;*/
+            font-size: 9pt;
+            margin-top: 6px;
+            color: #2C3E50;
+            /*color: #798992;
+            font-size: 11px;
+            margin-right: 5px*/
+        }
+
+            .small_sub_post_info a {
+                color: #2C3E50;
+            }
+    </style>
+
+    <script type="text/javascript" src="http://apis.google.com/js/plusone.js">{lang: 'vi'}</script>
+</head>
+
+<body>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v14.0" nonce="kQE8H69e"></script>
+
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+    <a class="scrollToTop" href="#"><i class="fa fa-angle-up"></i></a>
+
+    <div class="container-fluid">
+        <header id="header">
+            <div class="row">
+                @*<div class="col-lg-12 col-md-12 col-sm-12">*@
+                <div class="header_top">
+                    <div class="header_top_left">
+                        <ul class="top_nav">
+                            @foreach (var item in top_menu_list)
+                            {
+                                <li><a href="@item.Link" title="@item.Name">@item.Name</a></li>
+                            }
+                        </ul>
+                    </div>
+                    @*<div class="input-group ml-auto" style="text-align: center; width: 100%; max-width: 300px; float: right; margin-top: 14px; margin-bottom: 10px; border: 1px red solid;">
+                             <input type="text" placeholder="Tìm kiếm.." name="search">
+                             <button type="submit"><i class="fa fa-search"></i></button>
+                        </div>*@
+                    <div class="header_top_right">
+                        <p>
+                            <script>document.write(today.toUTCString());</script>
+                        </p>
+                    </div>
+                </div>
+                @*</div>*@
+                @*<div class="col-lg-12 col-md-12 col-sm-12">*@
+                @*<div class="header_bottom">
+                    <div class="logo_area">
+                        @if (@web_logo != null)
+                        {
+                            <a href="@web_logo.Link" class="logo" title="@web_name.Link">
+                                <img src="~/Upload/images/@web_logo.Avatar" alt="@web_logo.Name" />
+                            </a>
+                        }
+                    </div>
+                    <div class="add_banner">
+                        @if (top_ad_banner != null)
+                        {
+                            <a href="@top_ad_banner.Link" title="@top_ad_banner.Link">
+                                <img src="~/Upload/images/@top_ad_banner.Avatar" alt="@top_ad_banner.Name">
+                            </a>
+                        }
+                    </div>
+                </div>*@
+                @*</div>*@
+            </div>
+        </header>
+    </div>
+
+    <div class="container-fluid" >
+        <section id="header-logo">
+            <div class="row"> 
+                
+                <div class="header_bottom">
+                    <div class="logo_area">
+                        @if (@web_logo != null)
+                        {
+                            <a href="@web_logo.Link" class="logo" title="@web_name.Link">
+                                <img src="~/Upload/images/@web_logo.Avatar" alt="@web_logo.Name" />
+                            </a>
+                        }
+                    </div>
+                    <div class="add_banner">
+                        @if (top_ad_banner != null)
+                        {
+                            <a href="@top_ad_banner.Link" title="@top_ad_banner.Link">
+                                <img src="~/Upload/images/@top_ad_banner.Avatar" alt="@top_ad_banner.Name">
+                            </a>
+                        }
+                    </div>
+                </div>
+               
+            </div>
+        </section>
+    </div>
+
+    @*--MENU CHINH--*@
+
+    <div class="container-fluid">
+        <section id="navArea">
+            <nav class="navbar navbar-inverse" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav main_nav">
+                        <li class="active"><a href="/"><span class="fa fa-home desktop-home"></span><span class="mobile-show">Trang chủ</span></a></li>
+
+                        @foreach (var item in root_categories)
+                        {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" href="#" title="@item.Name">@item.Name <span class="caret"></span></a>
+                                @{
+                                    var subcategories = data.GetSubCategories(item.Id);
+                                }
+                                <ul class="dropdown-menu" role="menu">
+                                    @foreach (var itemsub in subcategories)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("PostBySubCate","Home", new { subcateid = itemsub.Id, subcatename = data.GenerateFriendlyName(itemsub.Name.Trim()) })" title="@itemsub.Name">
+                                                @itemsub.Name
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="input-group ml-auto" style="text-align:right; width: 100%; max-width: 220px;float:right; margin-top:12px; margin-bottom:12px; ">
+                        @using (Html.BeginForm("SearchPost", "Home", FormMethod.Get, new { enctype = "multipart/form-data", @class = "input-group rounded" }))
+                        {
+                            <input type="text" id="search_input" placeholder="Tìm kiếm.." name="search_input">
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                        }
+                    </div>
+
+                </div>
+
+            </nav>
+        </section>
+    </div>
+
+    @*<section id="newsSection">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="latest_newsarea">
+                        <span>Tin tức mới nhất</span>
+                        <ul id="ticker01" class="news_sticker">
+                            @foreach (var item in news)
+                            {
+                                <li style="color: #555"><a style="text-decoration:none;" href='@Url.Action("PostDetail","Home", new {postid = @item.Id , postname = data.GenerateFriendlyName(item.Name.Trim()) })' title="@item.Name"><img src="~/Upload/images/@item.Avatar" alt="@item.Name"> (@String.Format("{0:dd/MM/yyyy}", @item.LastModifiedOnDate)) @item.Name</a></li>
+                            }
+                        </ul>
+                        <div class="social_area">
+                            <ul class="social_nav">
+                                @foreach (var item in social_network_list)
+                                {
+                                    <li class="@item.Name"><a href="@item.Link"></a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>*@
+
+    <div class="container-fluid">
+        <section id="contentSection">
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-8">
+                    <div class="left_content">
+
+                        @RenderBody()
+
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                    <aside class="right_content">
+
+                        @if (top_right_youtube_video != null)
+                        {
+                            <div class="single_sidebar">
+                                @Html.Raw(@top_right_youtube_video.Content)
+                            </div>
+                        }
+                        @if (teacher_list.Count >= 1)
+                        {
+                            <div class="single_sidebar">
+                                <h2><span>Giới thiệu</span></h2>
+                                <ul class="spost_nav">
+                                    @foreach (var item in teacher_list)
+                                    {
+                                        <li>
+                                            <div class="media wow fadeInDown">
+                                                @*<a href='@Url.Action("PostDetail", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>*@
+                                                <div class="media-body">
+                                                    <a href='@Url.Action("CommonPage", "Home", new { id = @item.Id, code = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name"> &raquo; @item.Name</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (inform.Count >= 1)
+                        {
+                            <div class="single_sidebar">
+                                <h2><span>Thông báo</span></h2>
+                                <ul class="spost_nav">
+                                    @foreach (var item in inform)
+                                    {
+                                        <li>
+                                            <div class="media wow fadeInDown">
+                                                @*<a href='@Url.Action("PostDetail", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>*@
+                                                <div class="media-body">
+                                                    <a href='@Url.Action("PostDetailByType", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">
+                                                        &raquo; @item.Name <span class="big_sub_post_info">(@String.Format("{0:dd/MM/yyyy}", @item.LastModifiedOnDate) - @data.GetFullnameByUserId((int)@item.UserId))</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+
+                                    }
+                                    @if (inform.Count >= 9)
+                                    {
+                                        <li>
+                                            <a href='@Url.Action("PostByType", "Home", new { post_type = "inform"})' class="catg_title"><p class="small_sub_post_info">Xem tất cả thông báo &raquo;</p></a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @*@if (inform.Count >= 1)
+                            {
+                                <div class="latest_post">
+                                    <h2><span>Thông báo</span></h2>
+                                    <div class="latest_post_container">
+                                        <div id="prev-button"><i class="fa fa-chevron-up"></i></div>
+                                        <ul class="latest_postnav">
+                                            @foreach (var item in inform)
+                                            {
+                                                <li>
+                                                    <div class="media">
+                                                        <a href='@Url.Action("PostDetail","Home", new {postid = item.Id, postname = @data.GenerateFriendlyName(@item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                                                        <div class="media-body">
+                                                            <a href='@Url.Action("PostDetail","Home", new {postid = item.Id, postname = @data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">&raquo; @item.Name</a>
+                                                            <span class="small_sub_post_info">( <i class="fa fa-calendar"></i> @String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate))   <i class="fa fa-user"></i> @data.GetFullnameByUserId((int)item.UserId)</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                        <div id="next-button"><i class="fa  fa-chevron-down"></i></div>
+                                    </div>
+                                </div>
+                            }*@
+
+                        @if (first_right_ad_banner != null)
+                        {
+                            <div class="single_sidebar">
+                                <div class="single_sidebar wow fadeInDown">
+                                    <a class="sideAdd" href="@first_right_ad_banner.Link" title="@first_right_ad_banner.Name">
+                                        <img src="~/Upload/images/@first_right_ad_banner.Avatar" alt="@first_right_ad_banner.Name">
+                                    </a>
+                                </div>
+                            </div>
+                        }
+
+                        @*@if (course.Count >= 1)
+                            {
+                                <div class="single_sidebar">
+                                    <h2><span>Khóa học</span></h2>
+                                    <ul class="spost_nav">
+                                        @foreach (var item in course)
+                                        {
+                                            <li>
+                                                <div class="media wow fadeInDown">
+                                                    <a href='@Url.Action("PostDetail", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                                                    <div class="media-body">
+                                                        <a href='@Url.Action("PostDetail", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">@item.Name</a> <br />
+                                                        <p class="small_sub_post_info"> &nbsp;<i class="fa fa-user"></i> @data.GetFullnameByUserId((int)item.UserId)<a href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim()) })'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(item.CateId).Name</a></p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }*@
+
+                        @if (news.Count >= 1)
+                        {
+                            <div class="single_sidebar">
+                                <h2><span>Tin tức</span></h2>
+                                <ul class="spost_nav">
+                                    @foreach (var item in news)
+                                    {
+                                        <li>
+                                            <div class="media wow fadeInDown">
+                                                <a href='@Url.Action("PostDetailByType", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>
+                                                <div class="media-body">
+                                                    <a href='@Url.Action("PostDetailByType", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">
+                                                        @item.Name&nbsp;<span class="big_sub_post_info">(@String.Format("{0:dd/MM/yyyy}", @item.LastModifiedOnDate) - @data.GetFullnameByUserId((int)@item.UserId))</span>
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                    @if (news.Count >= 9)
+                                    {
+                                        <li>
+                                            <a href='@Url.Action("PostByType", "Home", new { post_type = "news"})' class="catg_title"><p class="small_sub_post_info">Xem tất cả tin tức &raquo;</p></a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (second_right_ad_banner != null)
+                        {
+                            <div class="single_sidebar">
+                                <div class="single_sidebar wow fadeInDown">
+                                    <a class="sideAdd" href="@second_right_ad_banner.Link" title="@second_right_ad_banner.Name">
+                                        <img src="~/Upload/images/@second_right_ad_banner.Avatar" alt="/@second_right_ad_banner.Name">
+                                    </a>
+                                </div>
+                            </div>
+                        }
+
+                        @if (job.Count >= 1)
+                        {
+                            <div class="single_sidebar">
+                                <h2><span>Việc làm</span></h2>
+                                <ul class="spost_nav">
+                                    @foreach (var item in job)
+                                    {
+                                        <li>
+                                            <div class="media wow fadeInDown">
+                                                <div class="media-body">
+                                                    <a href='@Url.Action("PostDetailByType", "Home", new { postid = @item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">
+                                                        &raquo; @item.Name&nbsp;<span class="big_sub_post_info">(@String.Format("{0:dd/MM/yyyy}", @item.LastModifiedOnDate))</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                    @if (job.Count >= 9)
+                                    {
+                                        <li>
+                                            <a href='@Url.Action("PostByType", "Home", new { post_type = "job"})' class="catg_title"><p class="small_sub_post_info">Xem tất cả việc làm &raquo;</p></a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (tags.Count >= 1)
+                        {
+                            <div class="single_sidebar wow fadeInDown">
+                                <h2><span>Thẻ (tag)</span></h2>
+                                <ul>
+                                    @foreach (var item in tags)
+                                    {
+                                        <li class="cat-item"><a href='@Url.Action("PostbyTag", "Home", new { tagid = @item.TagID, tagname = data.GenerateFriendlyName(item.TagName.Trim()) })'>@item.TagName</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (website_link_list.Count >= 1)
+                        {
+                            <div class="single_sidebar wow fadeInDown">
+                                <h2><span>Liên kết website</span></h2>
+                                <ul>
+                                    @foreach (var item in website_link_list)
+                                    {
+                                        <li><a href="@item.Link">@item.Name</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (fanpage_facebook != null)
+                        {
+                            <div class="single_sidebar">
+                                <div class="single_sidebar wow fadeInDown">
+                                    @Html.Raw(@fanpage_facebook.Content)
+                                </div>
+                            </div>
+                        }
+                        @*<div class="single_sidebar wow fadeInDown">
+                                <h2><span>Lượt truy cập: Application["DaTruyCap"].ToString();</span></h2>
+                                <h4><span>@int.Parse(File.ReadAllText(Server.MapPath("~/Upload/files/Count_Visited.txt")))</span></h4>
+                            </div>*@
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <footer id="footer">
+        <div class="footer_top">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                    <div class="footer_widget wow fadeInLeftBig">
+                        <h2>
+                            @if (web_name != null)
+                            {
+                                @web_name.Name
+                            }
+                        </h2>
+
+                        @if (footer_logo != null)
+                        {
+                            <img src="~/Upload/images/@footer_logo.Avatar" alt="@web_name.Name" width="80%">
+                        }
+
+                        <div class="social_link_footer">
+                            <ul class="social_nav_footer">
+                                @foreach (var item in social_network_list)
+                                {
+                                    <li class="@item.Name"><a href="@item.Link"></a></li>
+                                }
+                            </ul>
+                        </div>
+
+                        @if (@contact_info != null)
+                        {
+                            <div>
+                                @Html.Raw(@contact_info.Content)
+                            </div>
+                        }
+                        @*@foreach (var item in contact_info_list)
+                            {
+                                <p>@item.Name</p>
+                            }*@
+                        @*<div>
+                            <p>
+                                @if (web_slogan != null)
+                                {
+                                    @web_slogan.Name
+                                }
+                            </p>
+                            </div>*@
+                    </div>
+                </div>
+                @*<div class="col-lg-3 col-md-3 col-sm-3">
+                        <div class="footer_widget wow fadeInDown">
+                            <h2>Thẻ bài viết (Tag)</h2>
+
+                                <ul>
+                                    @foreach (var item in tags)
+                                    {
+                                        <li class="cat-item_footer"><a href='@Url.Action("PostbyTag","Home", new {tagid = @item.TagID, tagname = data.GenerateFriendlyName(item.TagName.Trim()) })' title="@item.TagName">@item.TagName</a></li>
+                                    }
+                                </ul>
+                        </div>
+                    </div>*@
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                    <div class="footer_widget wow fadeInDown">
+                        <h2>Danh mục</h2>
+                        <ul>
+                            @{
+                                var parent_false = db.CategoryRepository.GetAll().Where(m => m.Status == false && m.ParentId == -1).Select(m => m.Id).ToList();
+
+                                foreach (var item in db.CategoryRepository.GetAll().Where(m => m.Status == true && m.ParentId != -1 && (parent_false.Contains((int)m.ParentId) == false)).ToList())
+                                {
+                                    <li class="cat-item_footer"><a href="@Url.Action("PostBySubCate","Home", new { subcateid = @item.Id, subcatename = data.GenerateFriendlyName(item.Name.Trim())  })" title="@item.Name">@item.Name</a></li>
+                                }
+                            }
+                        </ul>
+
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                    <div class="footer_widget wow fadeInRightBig">
+                        <h2>DỊCH VỤ</h2>
+                        <ul>
+                            @foreach (var item in main_menu_list)
+                            {
+                                <li class="cat-item_footer">
+                                    <a href="@Url.Action("CommonPage", "Home", new { id = item.Id, code = data.GenerateFriendlyName(item.Name.Trim()) })" title="@item.Name">
+                                        @item.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <ul>
+                            @foreach (var item in common_page_footer_list)
+                            {
+                                <li class="cat-item_footer">
+                                    <a href="@Url.Action("CommonPage", "Home", new { id = item.Id, code = data.GenerateFriendlyName(item.Name.Trim()) })" title="@item.Name">
+                                        @item.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer_bottom">
+            @if (copyright != null)
+            {
+                <p class="copyright">
+                    @*<script>document.write(new Date().getFullYear());</script>*@
+                    @*@Html.Raw(@copyright.Content)*@
+                    @copyright.Name
+                </p>
+            }
+            @if (developed != null)
+            {
+                <p class="developer">
+                    @*@Html.Raw(@developed.Content)*@
+                    @developed.Name
+                </p>
+            }
+        </div>
+    </footer>
+
+    <script src="~/Content/newsfeed/assets/js/jquery.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/wow.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/bootstrap.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/slick.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/jquery.li-scroller.1.0.js"></script>
+    <script src="~/Content/newsfeed/assets/js/jquery.newsTicker.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/jquery.fancybox.pack.js"></script>
+    <script src="~/Content/newsfeed/assets/js/custom.js"></script>
+
+    @*@Scripts.Render("~/bundles/jquery")*@
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+    @*@RenderSection("scripts", required: false)*@
+</body>
+</html>

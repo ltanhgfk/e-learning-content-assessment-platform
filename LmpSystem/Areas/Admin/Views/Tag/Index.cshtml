@@ -1,0 +1,332 @@
+﻿@model IEnumerable<LmpSystem.ViewModels.TagListViewModel>
+@{ ViewBag.Title = "Quản Lý Thẻ (Tag)";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml"; }
+<link href="~/Content/AdminLTE/plugins/datatables/dataTables.bootstrap4.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div style="margin-top:10px;">
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center text-uppercase">Quản Lý thẻ</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        @*<div class="col-lg-10 col-sm-12 col-md-10">
+                                @using (Html.BeginForm("Index", "Post", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-inline" }))
+                                {
+                                    <label style="display:inline-block;font-weight:normal;margin-top: 10px;">
+
+                                        @Html.DropDownList("post_type", (SelectList)data.GetListPostType(), htmlAttributes: new { @class = "form-control" })
+
+                                        <input name="titleStr" type="search" value="@(ViewBag.titleStr as string)" class="form-control" placeholder="Tiêu đề">
+
+                                        <input style="margin-left:0px" class="btn btn-info" type="submit" value="Tìm kiếm" />
+
+                                    </label>}
+                            </div>*@
+
+                        <div class="col-lg-1 col-sm-12 col-md-1">
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm" style="margin-top: 10px; text-align: right">
+                                    <button id="addTag" class="btn btn-warning"><i class="fa fa-plus"></i> Thêm Thẻ (tag)</button>
+                                    @*@Html.ActionLink("+Thêm Bài viết", "Create", null, new { @class = "btn btn-warning" })*@
+                                    @*<button id="addTag" class="btn btn-primary"><i class="fa fa-plus"></i> Thêm bài viết</button>*@
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="lstPost" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+
+                                <th>ID</th>
+                                <th>Tên thẻ (tag)</th>
+                                <th>Tổng Bài viết</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                <tr>
+                    <td>
+                        @item.TagID
+                    </td>
+                    <td>
+                        @item.TagName
+                    </td>
+                    <td>
+                        @item.PostCount
+                    </td>
+                    <td>
+                        <a onclick="EditTag(@item.TagID,'@item.TagName')" href="#" class="badge badge-warning">Sửa</a>
+                        <a onclick="deleteConfirm(@item.TagID,'@item.TagName')" href="#" class="badge badge-danger">Xóa</a>
+                        @*@{ if (User.IsInRole("admin"))
+                            { <a onclick="EditTag(@item.TagID,'@item.TagName')" href="#" class="badge badge-warning">Sửa</a>
+                                                    <a onclick="deleteConfirm(@item.TagID,'@item.TagName')" href="#" class="badge badge-danger">Xóa</a> } }*@
+
+                    </td>
+                </tr>
+}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên tag</th>
+                                <th>Tổng Bài viết</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--test modal-->
+<!-- The Modal -->
+<!--<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">-->
+<!-- Modal Header -->
+<!--<div class="modal-header">
+    <h4 class="modal-title">Modal Heading</h4>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>-->
+<!-- Modal body -->
+<!--<div class="modal-body">
+    Modal body..
+</div>-->
+<!-- Modal footer -->
+<!--<div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>-->
+<!--Xoa the modal-->
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Bạn có muốn xóa Thẻ Tag ?</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Modal body..
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" id="deleteBtn" class="btn btn-danger">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--Add tag -->
+<div class="modal" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Thêm Tag</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <input type="text" required id="TagName" placeholder="Nhập tên tag..." class="form-control pb-1" />
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" id="ConfirmAdd" class="btn btn-success">Thêm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--edit Tag -->
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Sửa Tag</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <input type="text" required id="TagNameEdit" placeholder="Nhập tên tag..." class="form-control pb-1" />
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" id="confirmeditBtn" class="btn btn-success">Sửa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Content/AdminLTE/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+@*<script src="~/Content/js/ListPost.js"></script>*@
+
+<script>
+    $(function () {
+        $("#lstPost").DataTable();
+    });
+
+    var newModal = $('#addModal');
+    var delmodal = $('#deleteModal');
+    var editModal = $('#editModal');
+
+    $('#addTag').click(function () {
+        //alert("vo add tag");
+        $('#TagName').val(null);
+        newModal.modal('show');
+    });
+    $('#ConfirmAdd').click(function () {
+        var sname = $('#TagName').val();
+
+        if (sname == "") {
+            alert("Hãy nhập đủ thông tin");
+        }
+        else {
+            newModal.modal('hide');
+            $.ajax({
+                type: "POST",
+                url: '/Tag/NewTag',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ name: sname }),
+                dataType: "json",
+                success: function (recData) {
+                    var notify = $.notify('<strong>Thành công</strong><br/>' + recData.Message + '<br />', {
+                        type: 'pastel-info',
+                        allow_dismiss: false,
+                        timer: 1000,
+                    });
+                    if (recData.reload != false) {
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    }
+
+                },
+                error: function (recData) {
+                    var notify = $.notify('<strong>Lỗi</strong><br/>' + recData.Message + '<br />', {
+                        type: 'pastel-warning',
+                        allow_dismiss: false,
+                    });
+                }
+            });
+        }
+
+    });
+    var ide;
+    var EditTag = function (id, name) {
+        ide = id;
+        $('#TagNameEdit').val(name);
+        editModal.modal('show');
+    }
+    $('#confirmeditBtn').click(function () {
+        var sname2 = $('#TagNameEdit').val();
+        if (sname2 == "") {
+            alert("Hãy nhập đủ thông tin");
+        }
+        else {
+            editModal.modal('hide');
+            $.ajax({
+                type: "POST",
+                url: '/Tag/UpdateTag',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ id: ide, name: sname2 }),
+                dataType: "json",
+                success: function (recData) {
+                    var notify = $.notify('<strong>Thành công</strong><br/>' + recData.Message + '<br />', {
+                        type: 'pastel-info',
+                        allow_dismiss: false,
+                        timer: 1000,
+                    });
+                    if (recData.reload != false) {
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    }
+
+                },
+                error: function () {
+                    var notify = $.notify('<strong>Lỗi</strong><br/>Không sửa được<br />', {
+                        type: 'pastel-warning',
+                        allow_dismiss: false,
+                    });
+                }
+            });
+        }
+
+    });
+    ////
+    var idde;
+    var deleteConfirm = function (id, title) {
+        delmodal.find('.modal-body').text(title);
+        delmodal.modal('show');
+        idde = id;
+    }
+    $('#deleteBtn').click(function () {
+        delmodal.modal('hide');
+        $.ajax({
+            type: "POST",
+            url: '/Tag/DeleteTag',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: idde }),
+            dataType: "json",
+            success: function (recData) {
+                var notify = $.notify('<strong>Thành công</strong><br />' + recData.Message + '<br />', {
+                    type: 'pastel-info',
+                    allow_dismiss: false,
+                    timer: 1000,
+                });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+
+            },
+            error: function () {
+                var notify = $.notify('<strong>Lỗi</strong><br />Không xóa được<br />', {
+                    type: 'pastel-warning',
+                    allow_dismiss: false,
+                });
+            }
+        });
+    });
+
+</script>

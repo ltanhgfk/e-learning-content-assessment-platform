@@ -1,0 +1,26 @@
+﻿@using LmpSystem.Common
+@{
+    GetData data = new GetData();
+    var web_name = data.GetLmpInfoByCode("web_name");
+    ViewBag.Title = "Lỗi không tìm thấy trang web "+ web_name.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    //GetData data = new GetData();
+    var error_404_content = data.GetLmpInfoByCode("error_404_content");
+    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    if (google_seo_keyword != null)
+    {
+        ViewBag.Keywords = google_seo_keyword.Link;
+    }
+}       
+                                
+<div class="error_page">
+    <h3>Trang web không tồn tại</h3>
+    <h1>404</h1>
+    @if (error_404_content != null) { 
+        @Html.Raw(error_404_content.Content);
+    }
+    <span></span> <a href='@Url.Action("Index","Home")' class="wow fadeInLeftBig">Trang chủ</a>
+</div>      
+                

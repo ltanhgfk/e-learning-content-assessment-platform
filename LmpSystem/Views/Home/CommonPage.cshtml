@@ -1,0 +1,41 @@
+﻿@model LmpSystem.Models.LmpInfo
+
+@using LmpSystem.Common
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    //CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    //GetData data = new GetData();
+    //var catename = Request.QueryString["catename"].ToString();
+    //var web_name = data.GetLmpInfoByCode("web_name");
+    //var name = "";
+    //if (web_name != null)
+    //{
+    //    name = web_name.Name;
+    //    ViewBag.Title = Model.Name + ", " + web_name.Name;
+    //}
+    //else
+    //{        
+    //    ViewBag.Title = Model.Name;
+    //}
+
+    //var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    //if (google_seo_keyword != null)
+    //{
+    //    ViewBag.Keywords = google_seo_keyword.Link;
+    //}
+
+    //var web_intro = data.GetLmpInfoByCode(Model.Code);
+    //var galeries = data.GetPostByType("galeries").Take(6).ToList();
+}
+
+<div class="contact_area">
+    <h1>@Model.Name</h1>
+    @if (Model != null)
+    {
+        @Html.Raw(Model.Content);
+    }
+</div>
+
+

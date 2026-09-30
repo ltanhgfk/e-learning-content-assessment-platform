@@ -1,0 +1,190 @@
+﻿@model LmpSystem.ViewModels.PostImageEditViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<style>
+    #imganno, #avatarPost {
+        display: none;
+    }
+</style>
+
+<h2>THAY ĐỔI HÌNH ẢNH</h2>
+
+@using (Html.BeginForm("Edit", "PostImage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.PostId)
+            @Html.HiddenFor(model => model.Avatar)
+
+            <hr />
+            <!--khuc upload anh-->
+            <div class="form-group">
+                @Html.Label("Thay đổi ảnh đại diện:", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    <label class="switch">
+                        <input type="checkbox" id="changeAvatar" name="changeAvatar" value="@(ViewBag.ChangeAvatar == true ? "true" : "false")" class="success">
+                        <span class="slider"></span>
+                    </label>
+                    <p id="changeAvtText" style="display:inline"> Giữ nguyên</p>
+                </div>
+            </div>
+            <div class="form-group" id="avatarPost">
+                @Html.Label("Ảnh đại diện: ", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    <input type="file" id="AvatarFile" name="AvatarFile" class="form-control-file" />
+                    @Html.ValidationMessageFor(model => model.AvatarFile, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10" style="text-align:center">
+                    <img class="img-responsive" style="max-width:60%;text-align:center" id="avtpreview" src="~/Upload/images/@Model.Avatar" @*"/Content/img/no-image-available.jpg"*@ alt="Ảnh đại diện" />
+                </div>
+            </div>
+            <!--Het khuc upload anh-->           
+
+            <div class="form-group">
+                <div style="float:left; margin-right: 20px;">
+                    <input type="submit" value="Lưu" class="btn btn-warning" />
+                </div>
+                <div style="float:left">
+                    @Html.ActionLink("Quay lại danh sách", "Index", new { id = Model.PostId }, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+<script>   
+
+    $('#changeAvatar').change(function () {
+        var x = $('#changeAvatar').prop("checked");
+        if (x == true) {
+            $('#changeAvtText').text(' Giữ nguyên');
+            $('#changeAvatar').val('true');
+            $('#avatarPost').show();
+            $('#avtpreview').show();
+        }
+        else if (x == false) {
+            $('#changeAvtText').text(' Thay đổi');
+            $('#changeAvatar').val('false');
+            $('#avatarPost').hide();
+            //$('#avtpreview').hide();
+            $("#AvatarFile").val(null);
+        }
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#avtpreview').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#AvatarFile").change(function () {
+        readURL(this);
+    });    
+
+    $("#PostType").change(function () {
+        getCateByPostType();
+        //changeStatus();
+        //getSubCate();
+    });
+
+    var getCateByPostType = function () {
+        //alert("ok con ga: " + $("#PostType").val());
+        //var xid = xthis.id;
+        //var st = xthis.checked;
+        $.ajax({
+            type: "POST",
+            url: '/Post/GetCateByPostType',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: $("#PostType").val() }),
+            dataType: "json",
+            success: function (recData) {
+                //var notify = $.notify('<strong>Thành công</strong><br/>' + recData.Message + '<br />', {
+                //    type: 'pastel-info',
+                //    allow_dismiss: false,
+                //    timer: 1000,
+                //});
+                alert("ok con de: ");
+                $("#SuperCateId").empty();
+                $("#SuperCateId").append("<option value='0'>Choose sub category</option>");
+                $.each(recData, function (index, optiondata) {
+                    $("#SuperCateId").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                });
+            },
+            error: function () { alert('An error occured'); }
+        });
+    }
+
+    $("#SuperCateId").change(function () {
+        //getCateByPostType();
+        //changeStatus();
+        getSubCate();
+    });
+
+    var getSubCate = function () {
+        alert("ok con ga" + $("#SuperCateId").val());
+        //var xid = xthis.id;
+        //var st = xthis.checked;
+        $.ajax({
+            type: "POST",
+            url: '/Post/GetSubCate',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: $("#SuperCateId").val() }),
+            dataType: "json",
+            success: function (recData) {
+                //var notify = $.notify('<strong>Thành công</strong><br/>' + recData.Message + '<br />', {
+                //    type: 'pastel-info',
+                //    allow_dismiss: false,
+                //    timer: 1000,
+                //});
+
+                alert("ok con de" + recData);
+                $("#CateId").empty();
+                //$("#CateId").append("<option value='0'>Choose sub category</option>");
+                $.each(recData, function (index, optiondata) {
+                    $("#CateId").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                });
+            },
+            error: function () { alert('An error occured'); }
+        });
+    }
+
+    //var changeStatus = function () {
+    //    alert("ok con ga" + $("#PostType").val());
+    //    //var xid = xthis.id;
+    //    //var st = xthis.checked;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: '/Post/ChangeStatus111',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({ id: $("#PostType").val(), state: false }),
+    //        dataType: "json",
+    //        success: function (recData) {
+    //            var notify = $.notify('<strong>Thành công</strong><br/>' + recData.Message + '<br />', {
+    //                type: 'pastel-info',
+    //                allow_dismiss: false,
+    //                timer: 1000,
+    //            });
+    //        },
+    //        error: function () { alert('An error occured'); }
+    //    });
+    //}
+
+</script>

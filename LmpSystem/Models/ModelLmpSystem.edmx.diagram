@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="6e70ef05b515492388b946de2d81b697" Name="Diagram1" ZoomLevel="68">
+        <EntityTypeShape EntityType="LmpSystemModel.Category" Width="1.5" PointX="0.75" PointY="3.125" />
+        <EntityTypeShape EntityType="LmpSystemModel.Feedback" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="LmpSystemModel.Invoice" Width="1.5" PointX="3" PointY="17.375" />
+        <EntityTypeShape EntityType="LmpSystemModel.Lesson" Width="1.5" PointX="5.25" PointY="16.125" />
+        <EntityTypeShape EntityType="LmpSystemModel.LmpInfo" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="LmpSystemModel.Order" Width="1.5" PointX="5.25" PointY="11.375" />
+        <EntityTypeShape EntityType="LmpSystemModel.Post" Width="1.5" PointX="3" PointY="7" />
+        <EntityTypeShape EntityType="LmpSystemModel.PostImage" Width="1.5" PointX="5.25" PointY="20.625" />
+        <EntityTypeShape EntityType="LmpSystemModel.PostReview" Width="1.5" PointX="5.25" PointY="7.125" />
+        <EntityTypeShape EntityType="LmpSystemModel.Question" Width="1.5" PointX="7.5" PointY="11.25" />
+        <EntityTypeShape EntityType="LmpSystemModel.Tag" Width="1.5" PointX="10.5" PointY="12.5" />
+        <EntityTypeShape EntityType="LmpSystemModel.User" Width="1.5" PointX="0.75" PointY="7.625" />
+        <AssociationConnector Association="LmpSystemModel.FK_Lmp_Posts_Lmp_Categories" />
+        <AssociationConnector Association="LmpSystemModel.FK_Invoice_User" />
+        <AssociationConnector Association="LmpSystemModel.FK_Lmp_Orders_Lmp_Invoices" />
+        <AssociationConnector Association="LmpSystemModel.FK_Lesson_Post" />
+        <AssociationConnector Association="LmpSystemModel.FK_Question_Lesson" />
+        <AssociationConnector Association="LmpSystemModel.FK_Order_Post" />
+        <AssociationConnector Association="LmpSystemModel.FK_Post_User" />
+        <AssociationConnector Association="LmpSystemModel.FK_PostImage_Post" />
+        <AssociationConnector Association="LmpSystemModel.FK_Question_Post" />
+        <AssociationConnector Association="LmpSystemModel.FK_Review_Post" />
+        <AssociationConnector Association="LmpSystemModel.FK_Review_User" />
+        <AssociationConnector Association="LmpSystemModel.LessonTag" />
+        <AssociationConnector Association="LmpSystemModel.PostTag" />
+        <EntityTypeShape EntityType="LmpSystemModel.UserScore" Width="1.5" PointX="7.375" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

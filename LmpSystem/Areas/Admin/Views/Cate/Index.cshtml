@@ -1,0 +1,230 @@
+﻿@model IEnumerable<LmpSystem.ViewModels.CateListViewModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+    LmpSystem.Common.GetData data = new LmpSystem.Common.GetData();
+}
+<link href="~/Content/AdminLTE/plugins/datatables/dataTables.bootstrap4.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div style="margin-top:10px;">
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center text-uppercase">Quản Lý danh mục</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        @*<div class="col-lg-10 col-sm-12 col-md-10">
+                                @using (Html.BeginForm("Index", "Cate", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-inline" }))
+                                {
+                                    <label style="display:inline-block;font-weight:normal;margin-top: 10px;">
+                                        @Html.DropDownList("post_type", (SelectList)data.GetListPostType(), htmlAttributes: new { @class = "form-control" })
+                                        <input style="margin-left:0px" class="btn btn-info" type="submit" value="Tìm kiếm" />
+                                    </label>}
+                            </div>*@
+
+                        <div class="col-lg-1 col-sm-12 col-md-1">
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm" style="margin-top: 10px; text-align: right">
+                                    @Html.ActionLink("+Thêm danh mục", "Create", null, new { @class = "btn btn-warning" })
+                                    @*<button id="addTag" class="btn btn-primary"><i class="fa fa-plus"></i> Thêm bài viết</button>*@
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="lstPost" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Icon)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Position)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ParentName)
+                                </th>
+                                @*<th>
+                                    @Html.DisplayNameFor(model => model.CateType)
+                                </th>*@
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Status)
+                                </th>
+                                <th>Quản trị</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Icon)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Position)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ParentName)
+                                    </td>
+                                    @*<td>
+                                        @Html.DisplayFor(modelItem => item.CateType)
+                                    </td>*@
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                        <label class="switch">
+                                            <input onchange="changeStt(this)" type="checkbox" id="@item.Id" @(item.Status == true ? "checked" : "") class="success">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        @*@{ if (User.Identity.Name == item.Username || User.IsInRole("admin"))
+        {*@
+                                        @Html.ActionLink("Cập nhật danh mục", "Edit", new { id = item.Id }, new { @class = "badge badge-warning" })
+                                        @*@Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "badge badge-success" })*@
+                                        <a onclick="deleteConfirm(@item.Id, '@item.Name')" href="#" class="badge badge-danger">Xóa</a>
+                                        @Html.ActionLink("Bản sao", "Clone", new { id = item.Id }, new { @class = "badge badge-primary" })
+                                        @*@Html.ActionLink("Tải bộ câu hỏi trắc ngiệm tự động", "AutoUpdateQuestion", new { id = item.Id }, new { @class = "badge badge-warning" })*@
+                                        @*}
+        }*@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<div class="row">
+        <div class="col-12">
+            <div class="card-title">                
+                @{ if (Model.PageCount > 1)
+                    {
+                        <nav id="pagelistpost" aria-label="Page navigation example" style="text-align:center">
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, titleStr = ViewBag.titleStr }), new PagedListRenderOptions { UlElementClasses = new string[] { "pagination" }, LiElementClasses = new string[] { "page-item" } })
+                        </nav>
+                    }
+                }
+            </div>
+        </div>
+    </div>*@
+
+</div>
+
+
+<!--Xoa the modal-->
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Bạn có chắc muốn xóa Danh mục ?</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Modal body..
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" id="deleteBtn" class="btn btn-danger">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Content/AdminLTE/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+@*<script src="~/Content/js/ListPost.js"></script>*@
+
+<script>
+    $(function () {
+        $("#lstPost").DataTable();
+    });
+
+    var delmodal = $('#deleteModal');
+    var idx;
+
+    var deleteConfirm = function (id, title) {
+        idx = id;
+        delmodal.find('.modal-body').text(title);
+        delmodal.modal('show');
+
+    }
+    $('#deleteBtn').click(function () {
+        delmodal.modal('hide');
+        $.ajax({
+            type: "POST",
+            url: '/Cate/DeleteCate',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: idx }),
+            dataType: "json",
+            success: function (recData) {
+                var notify = $.notify(recData.Message, {
+                    type: 'pastel-info',
+                    allow_dismiss: false,
+                    timer: 1000,
+                });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+
+            },
+            error: function () {
+                var notify = $.notify('<strong>Có lỗi (ajax) xảy ra, chưa xóa được!</strong>', {
+                    type: 'pastel-warning',
+                    allow_dismiss: false,
+                });
+            }
+        });
+    });
+
+    var changeStt = function (xthis) {
+        alert("Status: " + xthis.checked);
+        var xid = xthis.id;
+        var st = xthis.checked;
+        $.ajax({
+            type: "POST",
+            url: '/Cate/ChangeStatus',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: xid, state: st }),
+            dataType: "json",
+            success: function (recData) {
+                var notify = $.notify(recData.Message, {
+                    type: 'pastel-info',
+                    allow_dismiss: false,
+                    timer: 1000,
+                });
+            },
+            error: function () { alert('Có lỗi (ajax) xảy ra!'); }
+        });
+    }
+
+</script>

@@ -1,0 +1,323 @@
+﻿@model IEnumerable<LmpSystem.ViewModels.LessonDetailViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+    LmpSystem.Common.GetData data = new LmpSystem.Common.GetData();
+}
+
+<link href="~/Content/AdminLTE/plugins/datatables/dataTables.bootstrap4.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div style="margin-top:10px;">
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center text-uppercase">Quản Lý bài học</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        @*<div class="col-lg-10 col-sm-12 col-md-10">
+                                @using (Html.BeginForm("Index", "Lesson", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-inline" }))
+                                {
+                                    <label style="display:inline-block;font-weight:normal;margin-top: 10px;">
+                                        @Html.DropDownList("Lesson_type", (SelectList)data.GetListLessonType(), htmlAttributes: new { @class = "form-control" })
+                                        <input style="margin-left:0px" class="btn btn-info" type="submit" value="Tìm kiếm" />
+                                    </label>}
+                            </div>*@
+
+                        <div class="col-lg-12 col-sm-12 col-md-12">
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm" style="margin-top: 10px; text-align: right">
+                                    @Html.ActionLink("+Thêm Bài mới", "Create", new { id = ViewBag.PostId }, new { @class = "btn btn-warning" })
+                                    @*<button id="addTag" class="btn btn-primary"><i class="fa fa-plus"></i> Thêm bài viết</button>*@
+                                </div>
+                                @*<div class="input-group input-group-sm" style="margin-top: 10px; text-align: left">
+                                        @Html.ActionLink("+Thêm câu hỏi tự động", "CreateAuto", "Question", new { id = ViewBag.PostId }, new { @class = "btn btn-warning" })
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="lstPost" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Id)
+                                </th>
+                                @*<th>
+                                        @Html.DisplayNameFor(model => model.Avatar)
+                                    </th>*@
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Position)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.PostName)
+                                </th>
+                                <th>
+                                    Số lượng câu hỏi trắc nghiệm
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Status)
+                                </th>
+
+                                <th>Quản trị</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Id)
+                                    </td>
+                                    @*<td>
+                                            <img src="~/Upload/images/@item.Avatar" style="width:70px; height:70px" />
+                                        </td>*@
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Position)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PostName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Questions.Count)
+                                    </td>
+                                    <td>
+                                        @*@Html.DisplayFor(modelItem => item.Status)*@
+                                        <label class="switch">
+                                            <input onchange="changeStatus(this)" type="checkbox" id="@item.Id" @(item.Status == true ? "checked" : "")>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        @*@{ if (User.Identity.Name == item.Username || User.IsInRole("admin"))
+        {*@
+                                        @Html.ActionLink("Cập nhật", "Edit", new { id = item.Id }, new { @class = "badge badge-warning" })
+                                        @Html.ActionLink("Chi tiết", "Details", new { id = item.Id }, new { @class = "badge badge-success" })
+                                        <a onclick="deleteConfirm(@item.Id, '@item.Name')" href="#" class="badge badge-danger">Xóa</a>
+                                        @Html.ActionLink("Bản sao", "Clone", new { id = item.Id }, new { @class = "badge badge-primary" })
+                                        @Html.ActionLink("Chuyển thành bài học thành bài viết", "TransferToPost", "Post", new { lessonid = item.Id }, new { @class = "badge badge-warning" })
+
+                                        @*@Html.ActionLink("Câu hỏi", "Index", "Question", new { id = item.Id, postId = item.PostId }, new { @class = "badge badge-primary" })*@
+
+                                        @Html.ActionLink("Tải bộ câu hỏi có phần giải thích", "AutoUpdateQuestion", new { id = item.Id, postId = item.PostId }, new { @class = "badge badge-warning" })
+                                        @Html.ActionLink("Tải bộ câu hỏi không có phần giải thích", "AutoUpdateQuestionNoExp", new { id = item.Id, postId = item.PostId }, new { @class = "badge badge-warning" })
+                                        @Html.ActionLink("Tải bộ câu hỏi không có phần giải thích và không có ABC", "AutoUpdateQuestionNoExpNoABC", new { id = item.Id, postId = item.PostId }, new { @class = "badge badge-warning" })
+                                        @Html.ActionLink("Cập nhật thủ công câu hỏi", "Index", "Question", new { lessonid = item.Id, postid = item.PostId }, new { @class = "badge badge-info" })
+                                        <a onclick="deleteQuestionConfirm(@item.PostId, '@item.Name', @item.Id)" href="#" class="badge badge-danger">Xóa toàn bộ câu hỏi</a>
+                                        @*}
+        }*@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        @*<tfoot>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Avatar)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Position)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PostName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Quản trị</th>
+                                </tr>
+                            </tfoot>*@
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div style="float:left">
+        @Html.ActionLink("Quay lại danh sách bài viết", "../Post/Index", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<!-- The delete Modal -->
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Bạn có chắc muốn xóa bài viết ?</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Modal body..
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" id="deleteBtn" class="btn btn-danger">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- The delete Modal -->
+<div class="modal fade" id="deleteModalQuestion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Bạn có chắc muốn xóa toàn bộ câu hỏi trắc nghiệm thuộc bài viết này?</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Modal body..
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" id="deleteQuestionBtn" class="btn btn-danger">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Content/AdminLTE/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+
+
+<script>
+    $(function () {
+        $("#lstPost").DataTable();
+    });
+
+    var delmodal = $('#deleteModal');
+    var idx;
+    var deleteConfirm = function (id, title) {
+        idx = id;
+        delmodal.find('.modal-body').text(title);
+        delmodal.modal('show');
+    }
+
+    $('#deleteBtn').click(function () {
+        delmodal.modal('hide');
+        $.ajax({
+            type: "Post",
+            url: '/Lesson/Delete',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: idx }),
+            dataType: "json",
+            success: function (recData) {
+                var notify = $.notify(recData.Message, {
+                    type: 'pastel-info',
+                    allow_dismiss: false,
+                    timer: 1000,
+                });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+
+            },
+            error: function () {
+                var notify = $.notify('<strong>Lỗi (Ajax)</strong><br/>Chưa xóa được<br />', {
+                    type: 'pastel-warning',
+                    allow_dismiss: false,
+                });
+            }
+        });
+    });
+
+    //------------------------------
+
+    var delmodalquestion = $('#deleteModalQuestion');
+    var pidxq, lidxq;
+    var deleteQuestionConfirm = function (pidq, titleq, lidq) {
+        pidxq = pidq;
+        lidxq = lidq;
+        delmodalquestion.find('.modal-body').text(titleq);
+        delmodalquestion.modal('show');
+    }
+
+    $('#deleteQuestionBtn').click(function () {
+        delmodalquestion.modal('hide');
+        $.ajax({
+            type: "POST",
+            url: '/Lesson/DeleteQuestion',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ postid: pidxq, lessonid: lidxq }),
+            dataType: "json",
+            success: function (recData) {
+                var notify = $.notify(recData.Message, {
+                    type: 'pastel-info',
+                    allow_dismiss: false,
+                    timer: 1000,
+                });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+
+            },
+            error: function () {
+                var notify = $.notify('Có lỗi (ajax) xảy ra, chưa xóa được!', {
+                    type: 'pastel-warning',
+                    allow_dismiss: false,
+                });
+            }
+        });
+    });
+
+    var changeStatus = function (xthis) {
+        alert("ok con ga" + xthis.checked);
+        var xid = xthis.id;
+        var st = xthis.checked;
+        $.ajax({
+            type: "Post",
+            url: '/Lesson/ChangeStatus',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: xid, state: st }),
+            dataType: "json",
+            success: function (recData) {
+                var notify = $.notify(recData.Message, {
+                    type: 'pastel-info',
+                    allow_dismiss: false,
+                    timer: 1000,
+                });
+            },
+            error: function () { alert('Xảy ra lỗi (Ajax), chưa thay đổi được!'); }
+        });
+    }
+
+</script>

@@ -1,0 +1,99 @@
+﻿@model LmpSystem.Models.Feedback
+
+@{
+    ViewBag.Title = "Cập nhật feedback";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+    LmpSystem.Common.GetData data = new LmpSystem.Common.GetData();
+}
+
+<h2>CẬP NHẬT LIÊN HỆ CỦA NGƯỜI DÙNG</h2>
+<div class="container">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Nội dung</th>
+            </tr>
+        </thead>
+        <tbody>            
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.FullName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.FullName)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Email)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Email)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Subject)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Subject)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Content)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Content)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Status)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Status)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.CreatedOnDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.CreatedOnDate)
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Note)
+                </td>
+
+                <td>                    
+                    @Html.DisplayFor(model => model.Note)
+                </td>
+            </tr>       
+        </tbody>
+    </table>
+</div>
+
+    <div class="form-group">
+        <div style="float:left; margin-right: 20px;">
+            @Html.ActionLink("Cập nhật", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+        </div>
+        <div style="float:left">
+            @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>    
+

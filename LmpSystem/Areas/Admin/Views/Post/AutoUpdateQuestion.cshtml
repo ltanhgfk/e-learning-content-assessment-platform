@@ -1,0 +1,220 @@
+﻿@model LmpSystem.ViewModels.PostEditViewModel
+
+@{
+    ViewBag.Title = "Cập nhật câu hỏi từ tập tin";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout_DVCP.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<style>
+    .panelhideshowclass {
+        /*display:none;*/
+    }
+</style>
+
+<h2>Cập nhật câu hỏi trắc nghiệm</h2>
+<p>
+    <pre>
+    Định dạng nội dung câu hỏi như sau: 
+    <cauhoi>Nội dung câu hỏi
+    <*>a. Phương án đúng
+    b. Phương án b
+    c. Phương án c
+    d. Phương án d
+    <exp>Giải thích đáp án
+    - Định dạng có phần giải thích đáp án, các phương án có thứ tự a, b, c, d.
+    </pre>
+</p>
+@using (Html.BeginForm("AutoUpdateQuestion", "Post", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control"} })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>        
+
+        @*<div class="form-group">
+                @Html.Label("Thể loại bài viết", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-10">
+                    @Html.DropDownList("PostType", new SelectList(ViewBag.PostType, "Value", "Text"), new { @class = "form-control" })
+                    @Html.ValidationMessage("PostType", "", new { @class = "text-danger" })
+                </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Danh mục gốc bài viết", htmlAttributes: new { @class = "control -label col-md-4" })
+            <div class="col-md-10">
+                <select id="SuperCateId" name="SuperCateId" class="form-control" , required="required"></select>
+                @Html.ValidationMessage("SuperCateId", "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Danh mục bài viết", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-10">
+                <select id="SubCateId" name="SubCateId" class="form-control" , required="required"></select>
+                @Html.ValidationMessage("SubCateId", "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Thuộc khóa học (bài viết)", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-10">
+                <select id="CourseId" name="CourseId" class="form-control" , required="required"></select>
+                @Html.ValidationMessage("CourseId", "", new { @class = "text-danger", required = "required" })
+            </div>
+        </div>*@       
+
+        <div class="form-group">
+            @Html.Label("Tập tin câu hỏi (file txt):", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-10">
+                <input type="file" id="UploadedQuestionFile" name="UploadedQuestionFile" class="form-control-file" required="required" accept=".txt" />
+                @Html.ValidationMessage("UploadedQuestionFile", "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div style="float:left; margin-right: 20px;">
+                <input type="submit" value="Lưu" class="btn btn-warning" />
+            </div>
+            <div style="float:left">
+                @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </div>
+}
+
+<script>
+
+    var firstcateid = 0;
+
+    $('#Status').change(function () {
+        var x = $('#Status').prop("checked");
+        if (x == true) {
+            $('#showstatus').text(' Đăng ngay');
+            $('#Status').val('true');
+        }
+        else if (x == false) {
+            $('#showstatus').text(' Đăng nháp (không hiển thị)');
+            $('#Status').val('false');
+        }
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#avtpreview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    //$("#AvatarFile").change(function () {
+    //    readURL(this);
+    //});
+
+    $("#PostType").change(function () {
+        getCateByPostType();
+    });
+
+    var getCateByPostType = function () {
+        //alert("ok: getCateByPostType");
+        $.ajax({
+            type: "POST",
+            url: '/Cate/GetCateByPostType',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: $("#PostType").val() }),
+            dataType: "json",
+            success: function (recData) {
+                //firstcateid = recData[0].Value;
+                //alert("ok: " + recData[0].Value);
+                $("#SuperCateId").empty();
+                /*$("#SuperCateId").append("<option value='0'>Chọn danh mục gốc</option>");*/
+                $.each(recData, function (index, optiondata) {
+                    $("#SuperCateId").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                });
+            },
+            error: function () { alert('Có lỗi (ajax) xảy ra!'); }
+        });
+    }
+
+    //var getSubCateOnload = function (cateid) {
+    //        //alert("Vô getSubCateOnload, cateid = " + cateid)
+    //        $.ajax({
+    //            type: "POST",
+    //            url: '/Post/GetSubCate',
+    //            contentType: "application/json; charset=utf-8",
+    //            data: JSON.stringify({ id: cateid }),
+    //            dataType: "json",
+    //            success: function (recData) {
+    //                $("#CateId").empty();
+    //                $.each(recData, function (index, optiondata) {
+    //                    $("#CateId").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+    //                });
+    //            },
+    //            error: function () { alert('Có lỗi (ajax) xảy ra!'); }
+    //        });
+    //}
+
+    $("#SuperCateId").change(function () {
+        getSubCate();
+    });
+
+    var getSubCate = function () {
+        //alert("Vô getSubCate, cateid = " + $("#SuperCateId").val())
+        $.ajax({
+            type: "POST",
+            url: '/Cate/GetSubCate',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: $("#SuperCateId").val() }),
+            dataType: "json",
+            success: function (recData) {
+                $("#SubCateId").empty();
+                $.each(recData, function (index, optiondata) {
+                    $("#SubCateId").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                });
+            },
+            error: function () { alert('Có lỗi (ajax) xảy ra!'); }
+        });
+    }
+
+    $("#SubCateId").change(function () {
+        getPostList();
+    });
+
+    var getPostList = function () {
+        //alert("Vô getSubCate, cateid = " + $("#SuperCateId").val())
+        $.ajax({
+            type: "POST",
+            url: '/Cate/GetPostList',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ id: $("#SubCateId").val() }),
+            dataType: "json",
+            success: function (recData) {
+                $("#CourseId").empty();
+                $.each(recData, function (index, optiondata) {
+                    $("#CourseId").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                });
+            },
+            error: function () { alert('Có lỗi (ajax) xảy ra!'); }
+        });
+    }
+
+
+</script>

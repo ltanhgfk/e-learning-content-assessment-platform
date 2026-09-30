@@ -1,0 +1,232 @@
+﻿@model LmpSystem.ViewModels.PostDetailViewModel
+
+@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+@{
+    //ViewBag.Title = "Chi tiết bài viết";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   //try with "en-US"
+    GetData data = new GetData();
+
+    var web_name = data.GetLmpInfoByCode("web_name");
+    if (web_name != null)
+    {
+        ViewBag.Title = Model.Name + " - " + web_name.Name;  //Request.Params["subcateId"] => hok được
+    }
+    else
+    {
+        ViewBag.Title = Model.Name;
+    }
+
+    //var social_network_list = data.GetListLmpInfoByCode("social_network_list");// [Display(Name = "Mạng xã hội")]
+    var slide_left = data.GetLmpInfoByCode("slide_left");
+    var slide_right = data.GetLmpInfoByCode("slide_right");
+    var share_social_network_inline = data.GetLmpInfoByCode("share_social_network_inline");
+    var share_social_network_javascript = data.GetLmpInfoByCode("share_social_network_javascript");
+    //var facebook_commnent_code = data.GetLmpInfoByCode("facebook_commnent_code");
+    //var facebook_likeshare_code = data.GetLmpInfoByCode("facebook_likeshare_code");
+    //var twitter_list = data.GetListLmpInfoByCode("twitter_list");// [Display(Name = "Mạng xã hội")]
+    //var googleplus_list = data.GetListLmpInfoByCode("googleplus_list");// [Display(Name = "Mạng xã hội")]
+
+    var keyword = "";
+    //var other = data.GetPostByType("other").ToList();
+}
+
+@*<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>*@
+
+<div class="single_page">
+
+    @*<ol class="breadcrumb">
+            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+            <li>
+                @if (ViewContext.RouteData.Values["controller"].ToString() != "Home")
+                {
+                    @: @Html.ActionLink(ViewContext.RouteData.Values["controller"].ToString(), "Index", ViewContext.RouteData.Values["controller"].ToString())
+                }
+                @if (ViewContext.RouteData.Values["action"].ToString() != "Index")
+                {
+                    @: @Html.ActionLink(ViewContext.RouteData.Values["action"].ToString(), ViewContext.RouteData.Values["action"].ToString(), ViewContext.RouteData.Values["controller"].ToString())
+                }
+            </li>
+        </ol>*@
+
+    <h1>@Model.Name</h1>
+
+    <div class="related_post" style="color:#666; margin-top: 10px; font-size: 13px;">
+        <p>@Model.Resume</p>
+    </div>
+
+    <div class="post_commentbox related_post">
+        <a href="#">
+            <i class="fa fa-user"></i>@data.GetFullnameByUserId(Model.UserId)
+        </a>
+        <span><i class="fa fa-calendar"></i>@String.Format("{0:dd/MM/yyyy}", Model.LastModifiedOnDate)</span>
+        @*<a href='@Url.Action("PostBySubCate", "Home", new { subcateid = Model.CateId, subcatename = data.GenerateFriendlyName(Model.Name.Trim()) })' title="@Model.CateName"><i class="fa fa-tags"></i>@Model.CateName</a>*@
+    </div>
+
+    @if (@Model.Video != null)
+    {
+        <div class="related_post">
+            @Html.Raw(Model.Video)
+        </div>
+    }
+        <div class="related_post">
+            @Html.Raw(Model.Content)
+        </div>
+        
+        <div class="related_post" style="border: 1px solid #eee; padding: 10px 0px 0px 10px">
+            @{
+                var url = "http://hoccungcophuong.edu.vn/chi-tiet-bai-viet-" + data.GenerateFriendlyName(Model.Name.Trim()) + "-" + @Model.Id + "-html";
+            }
+            <div style="float:left; margin-right: 6px; font-weight: bold">Chia sẻ: </div>
+            <div style="float: left; margin-right: 6px">
+                <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="true">Tweet</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+            <div style="float: left; margin-right: 6px">
+                <div class="fb-like" data-href=@url data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="true"></div>
+            </div>
+            <div style="float: left; margin-right: 6px">
+                <g:plusone></g:plusone>
+            </div>
+        </div>
+
+        @*<div class="related_post">
+            <ul>
+                @foreach (var item in Model.PostTags)
+                {
+                    <li class="cat-item"><a href='@Url.Action("PostByTagType", "Home", new { tagid = @item.TagID, post_type = Model.PostType, tagname = data.GenerateFriendlyName(item.TagName.Trim()) })' title="@item.TagName">@item.TagName</a></li>
+                    keyword = keyword + @item.TagName + ", ";
+                }
+                @{                    
+                    var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+                    if (google_seo_keyword != null)
+                    {
+                        ViewBag.Keywords = google_seo_keyword.Link + ", " + keyword + Model.CateName;
+                    }
+                    else
+                    {
+                        ViewBag.Keywords = keyword + Model.CateName;
+                    }
+                }
+            </ul>
+        </div>*@
+ 
+        <div class="single_post_content">
+            <div class="row">
+                @{
+                    var prevousPost = db.PostRepository.GetAll().Where(m => m.Status == true && m.Position < Model.Position && m.PostType == Model.PostType).OrderByDescending(m => m.Position).Take(1).FirstOrDefault();
+                    var nextPost = db.PostRepository.GetAll().Where(m => m.Status == true && m.Position > Model.Position && m.PostType == Model.PostType).OrderBy(m => m.Position).Take(1).FirstOrDefault();
+                }                
+                    <div class="col-lg-6 col-md-6 col-sm-6" style="margin-top:20px;">
+                        <div class="media wow fadeInDown">
+                            <p class="small_sub_post_info">
+                                &laquo; Bài trước
+                            </p>
+                            @if (prevousPost != null)
+                            {
+                                <div style="width: 100%">
+                                    <a href='@Url.Action("PostDetailByType", "Home", new { postid = prevousPost.Id, postname = data.GenerateFriendlyName(prevousPost.Name.Trim()) })' class="catg_title" title="@prevousPost.Name"> @prevousPost.Name</a>
+                                </div>
+                            }
+                            </div>
+                    </div>               
+                
+                    <div class="col-lg-6 col-md-6 col-sm-6" style="margin-top:20px;text-align: right">
+                        <div class="media wow fadeInDown">
+                            <p class="small_sub_post_info">
+                                Bài kế tiếp &raquo;
+                            </p>
+                            @if (nextPost != null)
+                            {
+                                <div style="width: 100%">
+                                    <a href='@Url.Action("PostDetailByType", "Home", new { postid = nextPost.Id, postname = data.GenerateFriendlyName(nextPost.Name.Trim()) })' class="catg_title" title="@nextPost.Name"> @nextPost.Name</a>
+                                </div>
+                            }
+                            </div>
+                    </div>                
+            </div>
+        </div>
+
+        <div class="related_post">
+            @*if (facebook_commnent_code != null)*@
+            @{
+                @*@Html.Raw(@facebook_commnent_code.Content)*@
+                //var url = "http://hoccungcophuong.edu.vn/chi-tiet-bai-viet-" + data.GenerateFriendlyName(Model.Name.Trim()) + "-" + @Model.Id + "-html";
+                <div class="fb-comments" data-href=@url data-width="100%" data-numposts="5"></div>
+            }
+        </div>
+
+        @{
+            var otherpost = db.PostRepository.GetAll().Where(m => m.PostType == Model.PostType && m.Status == true && m.Id != Model.Id ).OrderByDescending(m => m.LastModifiedOnDate).ToList();
+            if (otherpost.Count >= 1)
+            {
+                <div class="related_post">
+                    @*<h2>Bài viết khác cùng danh mục</h2>*@
+                    <div class="callout top-left">Các bài viết khác cùng thể loại</div>
+                    <div class="single_post_content_other_cate">
+                        <div class="row">
+                            @foreach (var item in otherpost)
+                            {
+                                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top:20px;">
+                                    <div class="media wow fadeInDown">
+                                        @*<a href='@Url.Action("PostDetailByType", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="media-left" title="@item.Name"> <img alt="@item.Name" src="~/Upload/images/@item.Avatar"> </a>*@
+                                        <div class="media-body">
+                                            <a href='@Url.Action("PostDetailByType", "Home", new { postid = item.Id, postname = data.GenerateFriendlyName(item.Name.Trim()) })' class="catg_title" title="@item.Name">
+                                                &raquo; @item.Name <span class="big_sub_post_info">(@String.Format("{0:dd/MM/yyyy}", item.LastModifiedOnDate))</span>
+                                            </a>
+                                            @*<p class="small_sub_post_info">
+                                                - @data.GetFullnameByUserId((int)item.UserId) <a href='@Url.Action("PostBySubCate", "Home", new { subcateid = item.CateId, subcatename = data.GenerateFriendlyName(item.Name.Trim())})'> <i class="fa fa-tags"></i> @db.CategoryRepository.FindByID(item.CateId).Name</a>
+                                            </p>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @*/*slide trái phải <>*/*@
+    <nav class="nav-slit">
+        @if (slide_left != null)
+        {
+            <a class="prev" href="@slide_left.Link">
+                <span class="icon-wrap"><i class="fa fa-angle-left"></i></span>
+                <div>
+
+                    <h3>@slide_left.Name</h3>
+                    <img src="~/Upload/images/@slide_left.Avatar" alt="@slide_left.Name" />
+                    }
+                </div>
+            </a>
+        }
+        @if (slide_right != null)
+        {
+            <a class="next" href="@slide_right.Link">
+                <span class="icon-wrap"><i class="fa fa-angle-right"></i></span>
+                <div>
+                    <h3>@slide_right.Name</h3>
+                    <img src="~/Upload/images/@slide_right.Avatar" alt="@slide_right.Name" />
+                </div>
+            </a>
+        }
+    </nav>
+
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    @*@if (share_social_network_javascript != null)
+        {
+            @Html.Raw(@share_social_network_javascript.Content)
+        }
+        else
+        {
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-630b74341e6db661"></script>
+        }*@
+

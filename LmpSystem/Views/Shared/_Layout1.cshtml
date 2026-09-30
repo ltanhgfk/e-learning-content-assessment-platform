@@ -1,0 +1,207 @@
+﻿@using LmpSystem.Common
+@using LmpSystem.Repository
+@using LmpSystem.Models
+@using System.Globalization
+@{
+    UnitOfWork db = new UnitOfWork(new LmpSystemEntities());
+    GetData data = new GetData();
+    CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");
+
+    /*Thong tin chung by Code*/
+    var web_name = data.GetLmpInfoByCode("web_name");
+    //ViewBag.Title = web_name.Name;
+    var google_seo_description = data.GetLmpInfoByCode("google_seo_description");
+    //var google_seo_keyword = data.GetLmpInfoByCode("google_seo_keyword");
+    //ViewBag.Keywords = data.GetLmpInfoByCode("google_seo_keyword");
+    var web_logo = data.GetLmpInfoByCode("web_logo");
+    var footer_logo = data.GetLmpInfoByCode("footer_logo");
+    var web_slogan = data.GetLmpInfoByCode("web_slogan");
+    var top_menu_list = data.GetListLmpInfoByCode("top_menu_list");//menu đầu trang
+    var top_ad_banner = data.GetLmpInfoByCode("top_ad_banner");//[Display(Name = "Banner QC đầu trang")]
+    var main_menu_list = data.GetListLmpInfoByCode("main_menu_list");//[Display(Name = "Danh mục chính")]
+    var social_network_list = data.GetListLmpInfoByCode("social_network_list");// [Display(Name = "Mạng xã hội")]
+    var top_right_youtube_video = data.GetLmpInfoByCode("top_right_youtube_video");//[Display(Name = "Video giới thiệu (youtube)")]
+    var first_right_ad_banner = data.GetLmpInfoByCode("first_right_ad_banner");// [Display(Name = "Banner quảng cáo số 1 bên phải")]
+    var second_right_ad_banner = data.GetLmpInfoByCode("second_right_ad_banner");//[Display(Name = "Banner quảng cáo số 2 bên phải")]
+    var fanpage_facebook = data.GetLmpInfoByCode("fanpage_facebook");//[Display(Name = "Facebook Fanpage")]
+                                                                     //var googlemap = data.GetLmpInfoByCode("googlemap");//[Display(Name = "Google map")]
+    var copyright = data.GetLmpInfoByCode("copyright");//[Display(Name = "Dòng bản quyền (copyright)")]
+    var developed = data.GetLmpInfoByCode("developed");//[Display(Name = "Người phát triển (developer)")]
+    var contact_intro = data.GetLmpInfoByCode("contact_intro");//[Display(Name = "Giới thiệu trang liên hệ")]
+    var web_intro = data.GetLmpInfoByCode("web_intro");//[Display(Name = "Giới thiệu website")]
+    var contact_info_list = data.GetListLmpInfoByCode("contact_info_list");//[Display(Name = "Thông tin liên hệ (address, mail, phone)")]
+    var contact_info = data.GetLmpInfoByCode("contact_info_list");
+    var website_link_list = data.GetListLmpInfoByCode("website_link_list");//[Display(Name = "Liên kết website")]
+    var common_page_footer_list = data.GetListLmpInfoByCode("common_page_footer_list"); //[Display(Name = "Các trang tĩnh (link ở footer)")]
+    var teacher_list = data.GetListLmpInfoByCode("teacher_list");
+
+    /*****************************************/
+
+    /*Thong tin chinh cua web*/
+    var root_categories = data.GetRootCategories();
+    var news = data.GetPostByType("news").Take(9).ToList();//9 tin tuc moi nhat
+    var tags = data.GetTagList();
+    //var latestpost = db.PostRepository.GetAll().OrderByDescending(m=>m.LastModifiedOnDate).Take(6).ToList();//6 bai viet moi nhat > main slider
+    //var course = data.GetPostByType("course").Take(16).ToList();
+    //var other = data.GetPostByType("rightside").Take(16).ToList();
+    var inform = data.GetPostByType("inform").Take(9).ToList();
+    var job = data.GetPostByType("job").Take(9).ToList();
+    /*************************/
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/font.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/li-scroller.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/slick.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/theme.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/newsfeed/assets/css/style.css">
+
+</head>
+<body>
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v14.0" nonce="kQE8H69e"></script>
+
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+    <a class="scrollToTop" href="#"><i class="fa fa-angle-up"></i></a>
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                
+                    <div class="header_top">
+                        <div class="header_top_left">
+                            <ul class="top_nav">
+                                @foreach (var item in top_menu_list)
+                                {
+                                    <li><a href="@item.Link" title="@item.Name">@item.Name</a></li>
+                                }
+                            </ul>
+                        </div>
+                        @*<div class="input-group ml-auto" style="text-align: center; width: 100%; max-width: 300px; float: right; margin-top: 14px; margin-bottom: 10px; border: 1px red solid;">
+                                 <input type="text" placeholder="Tìm kiếm.." name="search">
+                                 <button type="submit"><i class="fa fa-search"></i></button>
+                            </div>*@
+                        <div class="header_top_right">
+                            <p>
+                                <script>document.write(today.toUTCString());</script>
+                            </p>
+                        </div>
+                    </div>
+                
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="header_bottom">
+                        <div class="logo_area">
+                            @if (@web_logo != null)
+                            {
+                                <a href="@web_logo.Link" class="logo" title="@web_name.Link">
+                                    <img src="~/Upload/images/@web_logo.Avatar" alt="@web_logo.Name" />
+                                </a>
+                            }
+                        </div>
+                        <div class="add_banner">
+                            @if (top_ad_banner != null)
+                            {
+                                <a href="@top_ad_banner.Link" title="@top_ad_banner.Link">
+                                    <img src="~/Upload/images/@top_ad_banner.Avatar" alt="@top_ad_banner.Name">
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+
+    <div class="jumbotron text-center">
+        <h1>My First Bootstrap Page</h1>
+        <p>Resize this responsive page to see the effect!</p>
+    </div>
+
+    <div class="container-fluid" style="border: 1px solid red">
+        <div class="row">
+            @RenderBody()
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Column 1</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Column 2</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Column 3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Column 1</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Column 2</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Column 3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Column 1</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Column 2</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Column 3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Content/newsfeed/assets/js/jquery.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/wow.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/bootstrap.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/slick.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/jquery.li-scroller.1.0.js"></script>
+    <script src="~/Content/newsfeed/assets/js/jquery.newsTicker.min.js"></script>
+    <script src="~/Content/newsfeed/assets/js/jquery.fancybox.pack.js"></script>
+    <script src="~/Content/newsfeed/assets/js/custom.js"></script>
+
+
+</body>
+</html>
